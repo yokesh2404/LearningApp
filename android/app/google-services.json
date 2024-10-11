@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "757892127923",
+    "project_id": "maths123-d732c",
+    "storage_bucket": "maths123-d732c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757892127923:android:f8a31af3c38119133f24c6",
+        "android_client_info": {
+          "package_name": "com.example.kurups_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSwfuA20gDXMYLz7DK9ndtXq3YjBeQ9-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
