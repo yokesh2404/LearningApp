@@ -1,1 +1,3 @@
-class ThemeHelper {}
+class ThemeHelper {
+  ThemeHelper._();
+}
