@@ -16,7 +16,7 @@ class DatabaseMethods {
 //changes N
   Future<QuerySnapshot<Map<String, dynamic>>> getUsersDetails(
       String userEmail) async {
-    return await FirebaseFirestore.instance.collection("users").get();
+    return await FirebaseFirestore.instance.collection("home").get();
   }
 
 //video import from firebase

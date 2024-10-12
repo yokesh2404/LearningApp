@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:kurups_app/screens/home/home.dart';
+import 'package:kurups_app/screens/home/view/home.dart';
 import 'package:kurups_app/screens/login/login.dart';
 import 'package:kurups_app/screens/register/register.dart';
 import 'package:kurups_app/screens/splash/splash.dart';

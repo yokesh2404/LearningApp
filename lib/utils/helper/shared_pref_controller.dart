@@ -31,7 +31,7 @@ class SharedPrefController {
   getStringData({required String key}) async {
     final sharedPreferences = await preference;
     var str = sharedPreferences.getString(key);
-    if (str != null) {
+    if (str != null && str.isNotEmpty) {
       var decrypt = EncryptData.decryptAES(str);
       return decrypt;
     }

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kurups_app/injector/injector.dart';
 //import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kurups_app/utils/constants/colors.dart';
 import 'package:kurups_app/entity/request/user_details/user_details.dart';
@@ -309,7 +310,8 @@ class _RegisterPageState extends State<RegisterPage> with AppFunctionHelper {
           dob: "",
           status: "created");
       registerProvider.updateLoadingState(true);
-      await FirebaseDatabaseService.instance
+
+      await Injector.instance<FirebaseDatabaseService>()
           .storeUserData(userData: user, request: _userDetails.toJson())
           .then((_) {
         registerProvider.updateLoadingState(false);

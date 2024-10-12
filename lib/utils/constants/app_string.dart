@@ -8,6 +8,10 @@ class AppString {
   static const String register = "Register";
   static const String home = "Home";
   static const String registerSuccess = "Registered successfully!!";
+  static const String welcomeText = "Welcome to Kurups Maths";
+  static const String startLearning = "Start learning";
+  static const String categoires = "Categories";
+  static const String courseInProgress = "Courses in progress";
 }
 
 int firstNameLength = 50;
