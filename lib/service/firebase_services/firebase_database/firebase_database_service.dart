@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kurups_app/entity/chapters/chapters_response.dart';
 import 'package:kurups_app/entity/home/course_details.dart';
 import 'package:kurups_app/entity/request/user_details/user_details.dart';
 import 'package:kurups_app/service/firebase_services/firebase_database/database_keys.dart';
@@ -60,6 +61,29 @@ class FirebaseDatabaseService {
       return courseList;
     } catch (e) {
       return courseList;
+    }
+  }
+
+  Future<List<ChaptersResponse>> getChaptersById({required String id}) async {
+    List<ChaptersResponse> _chapters = [];
+
+    try {
+      var _data =
+          await _firestore.collection(DatabaseKeys.courses).doc(id).get();
+
+      var snapshot = await _data.data()!;
+      if (snapshot[id] != null) {
+        List _list = snapshot[id];
+        _list.forEach(
+          (element) {
+            print(element);
+            _chapters.add(ChaptersResponse.fromJson(element));
+          },
+        );
+      }
+      return _chapters;
+    } catch (e) {
+      return _chapters;
     }
   }
 }

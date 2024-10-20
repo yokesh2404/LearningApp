@@ -12,6 +12,7 @@ class AppString {
   static const String startLearning = "Start learning";
   static const String categoires = "Categories";
   static const String courseInProgress = "Courses in progress";
+  static const String chapters = "Chapters";
 }
 
 int firstNameLength = 50;

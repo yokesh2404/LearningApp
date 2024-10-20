@@ -52,20 +52,16 @@ class BasicConcept {
   final bool? isAvailable;
   @JsonKey(name: "title")
   final String? title;
+  @JsonKey(name: "id")
+  final String? id;
 
-  BasicConcept({
-    this.isAvailable,
-    this.title,
-  });
+  BasicConcept({this.isAvailable, this.title, this.id});
 
-  BasicConcept copyWith({
-    bool? isAvailable,
-    String? title,
-  }) =>
+  BasicConcept copyWith({bool? isAvailable, String? title, String? id}) =>
       BasicConcept(
-        isAvailable: isAvailable ?? this.isAvailable,
-        title: title ?? this.title,
-      );
+          isAvailable: isAvailable ?? this.isAvailable,
+          title: title ?? this.title,
+          id: id ?? this.id);
 
   factory BasicConcept.fromJson(Map<String, dynamic> json) =>
       _$BasicConceptFromJson(json);

@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kurups_app/data/auth_repo/auth_repo.dart';
 import 'package:kurups_app/data/database_repo/database_repo.dart';
 import 'package:kurups_app/entity/home/course_details.dart';
@@ -11,6 +13,7 @@ import 'package:kurups_app/service/firebase_services/firebase_auth_implementatio
 import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
 import 'package:kurups_app/service/log_services/log_service.dart';
 import 'package:kurups_app/utils/bloc_core/ui_status.dart';
+import 'package:kurups_app/utils/helper/route_helper.dart';
 
 part 'home_bloc_event.dart';
 part 'home_bloc_state.dart';
@@ -28,15 +31,14 @@ class HomeBloc extends Bloc<HomeBlocEvent, HomeBlocState> {
     _authServices = authServices;
     _databaseService = databaseService;
     _logService = logService;
-    on<HomeBlocEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<HomeBlocEvent>((event, emit) {});
     on<GetHomeData>(
       (event, emit) {
         return getUserDetails(event, emit);
       },
     );
     on<GetHomeCourses>((event, emit) => getCourses(event, emit));
+    on<ClickCourse>((event, emit) => onClickCourses(event, emit));
   }
 
   void getUserDetails(GetHomeData event, Emitter emit) async {
@@ -62,5 +64,10 @@ class HomeBloc extends Bloc<HomeBlocEvent, HomeBlocState> {
       emit(state.copyWith(
           status: const UIStatus.loadFailed(), courseList: _data));
     }
+  }
+
+  void onClickCourses(ClickCourse event, Emitter emit) {
+    GoRouter.of(event.context)
+        .pushNamed(RouteHelper.courseChapterName, extra: event.id);
   }
 }

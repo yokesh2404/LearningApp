@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:kurups_app/screens/chapters/chapters.dart';
+import 'package:kurups_app/screens/chapters/subchapter.dart';
 import 'package:kurups_app/screens/home/view/home.dart';
 import 'package:kurups_app/screens/login/login.dart';
 import 'package:kurups_app/screens/register/register.dart';
@@ -15,6 +17,8 @@ class RouteHelper {
   static const String registerScreenPath = '/register';
   static const String homeScreenName = 'home';
   static const String homeScreenPath = '/home';
+  static const String courseChapterName = 'courseChapter';
+  static const String courseChapterPath = '/courseChapter';
 
   static GoRouter get router => _router;
   static final _router = GoRouter(
@@ -45,6 +49,15 @@ class RouteHelper {
         path: homeScreenPath,
         builder: (context, state) {
           return const HomePage();
+        },
+      ),
+      GoRoute(
+        name: courseChapterName,
+        path: courseChapterPath,
+        builder: (context, state) {
+          return BasicPage(
+            chapterId: state.extra.toString(),
+          );
         },
       )
     ],

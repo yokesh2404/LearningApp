@@ -30,10 +30,12 @@ Map<String, dynamic> _$CourseDetailsToJson(CourseDetails instance) =>
 BasicConcept _$BasicConceptFromJson(Map<String, dynamic> json) => BasicConcept(
       isAvailable: json['isAvailable'] as bool?,
       title: json['title'] as String?,
+      id: json['id'] as String?,
     );
 
 Map<String, dynamic> _$BasicConceptToJson(BasicConcept instance) =>
     <String, dynamic>{
       'isAvailable': instance.isAvailable,
       'title': instance.title,
+      'id': instance.id,
     };

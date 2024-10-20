@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kurups_app/data/database_repo/database_repo.dart';
+import 'package:kurups_app/entity/chapters/chapters_response.dart';
 import 'package:kurups_app/entity/home/course_details.dart';
 import 'package:kurups_app/entity/request/user_details/user_details.dart';
 import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
@@ -23,5 +24,10 @@ class DatabaseRepoImpl extends DatabaseRepo {
   @override
   Future<List<BasicConcept>> getCourseList() async {
     return await _service.getCourseList();
+  }
+
+  @override
+  Future<List<ChaptersResponse>> getChapteersById({required String id}) async {
+    return await _service.getChaptersById(id: id);
   }
 }

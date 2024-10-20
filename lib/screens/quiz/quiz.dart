@@ -222,13 +222,13 @@ class _QuizScreenState extends State<QuizScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BasicPage(),
-            )),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => BasicPage(),
+      //       )),
+      // ),
     );
   }
 }

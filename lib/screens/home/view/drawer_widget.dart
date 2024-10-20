@@ -16,7 +16,7 @@ class DrawerWidget extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: const BoxDecoration(
-              color: AppColors.accent,
+              color: AppColors.primary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,14 +25,14 @@ class DrawerWidget extends StatelessWidget {
                 Text(
                   userDetails.name ?? "",
                   style: const TextStyle(
-                    color: AppColors.textPurple,
+                    color: AppColors.white,
                     fontSize: 24,
                   ),
                 ),
                 Text(
                   userDetails.email ?? "",
                   style: const TextStyle(
-                    color: AppColors.textPurple,
+                    color: AppColors.white,
                     fontSize: 14,
                   ),
                 ),

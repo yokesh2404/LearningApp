@@ -12,6 +12,7 @@ import 'package:kurups_app/utils/constants/app_string.dart';
 
 import 'package:kurups_app/utils/constants/colors.dart';
 import 'package:kurups_app/service/database.dart';
+import 'package:kurups_app/utils/dimension/app_sizes.dart';
 import 'package:kurups_app/utils/dimension/dimension.dart';
 import 'package:kurups_app/utils/helper/box_decorations.dart';
 
@@ -108,11 +109,31 @@ class _HomePageState extends State<HomePage> {
               fit: StackFit.expand,
               children: [
                 Positioned.fill(
-                  child: Image.asset(
-                    AppImages.homeBg,
+                  child: Container(
                     height: Dimensions.screenHeight,
                     width: Dimensions.screenWidth,
-                    fit: BoxFit.fill,
+                    decoration: BoxDecoration(
+                        color: AppColors.borderPrimary.withOpacity(0.5)),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: Dimensions.screenHeight / 2,
+                          width: Dimensions.screenWidth,
+                          decoration: BoxDecorations.boxDecorationwithoutShadow(
+                              borderColor: AppColors.primary,
+                              radius: const BorderRadius.only(
+                                  bottomRight:
+                                      Radius.circular(Dimensions.size_14),
+                                  bottomLeft:
+                                      Radius.circular(Dimensions.size_14)),
+                              backgroundColor: AppColors.primary),
+                        )
+                        // Image.asset(
+                        //   AppImages.startlearning,
+                        //   fit: BoxFit.fill,
+                        // ),
+                      ],
+                    ),
                   ),
                 ),
                 _bodyWidget(),
@@ -219,7 +240,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16.0), // Add some space below the search bar
             Container(
               decoration: BoxDecorations.boxDecorationwithoutShadow(
-                  backgroundColor: AppColors.accent),
+                  backgroundColor: AppColors.white),
               width: Dimensions.screenWidth,
               padding: const EdgeInsets.all(Dimensions.size_24),
               child: Column(
@@ -242,8 +263,8 @@ class _HomePageState extends State<HomePage> {
                           icon: Container(
                             decoration:
                                 BoxDecorations.boxDecorationwithoutShadow(
-                                    borderColor: AppColors.buttonSecondary,
-                                    backgroundColor: AppColors.buttonSecondary),
+                                    borderColor: AppColors.primary,
+                                    backgroundColor: AppColors.primary),
                             padding: const EdgeInsets.all(8),
                             child: Row(
                               children: [
@@ -253,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                                       .textTheme
                                       .bodyLarge
                                       ?.copyWith(
-                                          color: AppColors.appBarColorEnd,
+                                          color: AppColors.white,
                                           fontSize: Dimensions.size_12),
                                 ),
                                 const SizedBox(
@@ -261,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const Icon(
                                   Icons.arrow_forward_rounded,
-                                  color: AppColors.appBarColorEnd,
+                                  color: AppColors.white,
                                   size: 12,
                                 )
                               ],
@@ -301,31 +322,42 @@ class _HomePageState extends State<HomePage> {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         var courses = Injector.instance<HomeBloc>().state.courseList![index];
-        return Container(
-          decoration: BoxDecorations.decorationWithShadow(
-              decColor: AppColors.buttonSecondary),
-          padding: const EdgeInsets.all(Dimensions.size_20),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-              height: Dimensions.height_40,
-              width: Dimensions.width_40,
-              alignment: Alignment.center,
-              child: Image.asset(
-                AppImages.diamond,
-                height: Dimensions.height_30,
-                width: Dimensions.width_30,
+        return InkWell(
+          onTap: () => Injector.instance<HomeBloc>()
+              .add(ClickCourse(id: courses.id ?? "", context: context)),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              gradient: const LinearGradient(
+                colors: [AppColors.primary, AppColors.secondary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-            Text("${courses.title}",
-                style: const TextStyle(
-                  color: AppColors.textPurple,
-                )),
-            CircleAvatar(
-              backgroundColor: AppColors.white,
-              child: Image.asset(AppImages.play),
-            )
-          ]),
+            padding: const EdgeInsets.all(Dimensions.size_20),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: Dimensions.height_40,
+                    width: Dimensions.width_40,
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      AppImages.diamond,
+                      height: Dimensions.height_30,
+                      width: Dimensions.width_30,
+                    ),
+                  ),
+                  Text("${courses.title}",
+                      style: const TextStyle(
+                        color: AppColors.white,
+                      )),
+                  CircleAvatar(
+                    backgroundColor: AppColors.white,
+                    child: Image.asset(AppImages.play),
+                  )
+                ]),
+          ),
         );
       },
       separatorBuilder: (BuildContext context, int index) {
