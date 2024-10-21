@@ -39,6 +39,7 @@ class HomeBloc extends Bloc<HomeBlocEvent, HomeBlocState> {
     );
     on<GetHomeCourses>((event, emit) => getCourses(event, emit));
     on<ClickCourse>((event, emit) => onClickCourses(event, emit));
+    on<DrawerClickEvent>((event, emit) => onClickDrawer(event, emit));
   }
 
   void getUserDetails(GetHomeData event, Emitter emit) async {
@@ -69,5 +70,23 @@ class HomeBloc extends Bloc<HomeBlocEvent, HomeBlocState> {
   void onClickCourses(ClickCourse event, Emitter emit) {
     GoRouter.of(event.context)
         .pushNamed(RouteHelper.courseChapterName, extra: event.id);
+  }
+
+  void onClickDrawer(DrawerClickEvent event, Emitter emit) async {
+    switch (event.index) {
+      case 0:
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        await _authServices.signOut().then((_) {
+          GoRouter.of(event.context).go(
+            RouteHelper.loginScreenPath,
+          );
+        });
+        break;
+    }
   }
 }

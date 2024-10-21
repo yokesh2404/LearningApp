@@ -24,7 +24,7 @@ class SharedPrefController {
 
   setStringData({required String key, dynamic data}) async {
     final sharedPreferences = await preference;
-    var encrypt = EncryptData.encryptAES(data);
+    var encrypt = data.isNotEmpty ? EncryptData.encryptAES(data) : data;
     sharedPreferences.setString(key, encrypt);
   }
 

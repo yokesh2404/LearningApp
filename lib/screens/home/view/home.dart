@@ -83,86 +83,81 @@ class _HomePageState extends State<HomePage> {
         create: (context) => Injector.instance<HomeBloc>()
           ..add(GetHomeData())
           ..add(GetHomeCourses()),
-        child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            // appBar: PreferredSize(
-            //   preferredSize: Size(200, 50),
-            //   child: SafeArea(
-            //     child: AppBar(
-            //       title: Text(
-            //         'Home Page',
-            //         style: TextStyle(color: AppColors.onPrimary),
-            //       ),
-            //       backgroundColor: AppColors.primary,
-            //       leadingWidth: 80.0,
-            //     ),
-            //   ),
-            // ),
-            resizeToAvoidBottomInset: false,
-            endDrawer: DrawerWidget(
-              userDetails: Injector.instance<HomeBloc>().state.userDetails ??
-                  UserDetails(),
-            ),
-            body: SafeArea(
-                child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Positioned.fill(
-                  child: Container(
-                    height: Dimensions.screenHeight,
-                    width: Dimensions.screenWidth,
-                    decoration: BoxDecoration(
-                        color: AppColors.borderPrimary.withOpacity(0.5)),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: Dimensions.screenHeight / 2,
-                          width: Dimensions.screenWidth,
-                          decoration: BoxDecorations.boxDecorationwithoutShadow(
-                              borderColor: AppColors.primary,
-                              radius: const BorderRadius.only(
-                                  bottomRight:
-                                      Radius.circular(Dimensions.size_14),
-                                  bottomLeft:
-                                      Radius.circular(Dimensions.size_14)),
-                              backgroundColor: AppColors.primary),
-                        )
-                        // Image.asset(
-                        //   AppImages.startlearning,
-                        //   fit: BoxFit.fill,
-                        // ),
-                      ],
-                    ),
-                  ),
+        child: BlocConsumer<HomeBloc, HomeBlocState>(
+          builder: (context, state) {
+            return Scaffold(
+                key: _scaffoldKey,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                resizeToAvoidBottomInset: false,
+                endDrawer: DrawerWidget(
+                  userDetails: state.userDetails ?? UserDetails(),
+                  onClick: (int index) {
+                    Injector.instance<HomeBloc>()
+                        .add(DrawerClickEvent(index: index, context: context));
+                  },
                 ),
-                _bodyWidget(),
-              ],
-            ))));
+                body: SafeArea(
+                    child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        height: Dimensions.screenHeight,
+                        width: Dimensions.screenWidth,
+                        decoration: BoxDecoration(
+                            color: AppColors.borderPrimary.withOpacity(0.5)),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: Dimensions.screenHeight / 2,
+                              width: Dimensions.screenWidth,
+                              decoration:
+                                  BoxDecorations.boxDecorationwithoutShadow(
+                                      borderColor: AppColors.primary,
+                                      radius: const BorderRadius.only(
+                                          bottomRight: Radius.circular(
+                                              Dimensions.size_14),
+                                          bottomLeft: Radius.circular(
+                                              Dimensions.size_14)),
+                                      backgroundColor: AppColors.primary),
+                            )
+                            // Image.asset(
+                            //   AppImages.startlearning,
+                            //   fit: BoxFit.fill,
+                            // ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    _bodyWidget(),
+                  ],
+                )));
+          },
+          listener: (context, state) {},
+        ));
   }
 
   Widget _bodyWidget() {
-    return BlocConsumer<HomeBloc, HomeBlocState>(
+    return BlocBuilder<HomeBloc, HomeBlocState>(
       builder: (context, state) {
         return state.status.when(initial: () {
           return const Text("Initial");
         }, loading: () {
           return const Center(
             child: CircularProgressIndicator(
-              color: AppColors.primary,
+              color: AppColors.secondary,
             ),
           );
         }, loadFailed: () {
           return const Center(child: Text("No data"));
         }, loadSuccess: () {
-          return _buildBody();
+          return _buildBody(state);
         });
       },
-      listener: (context, state) {},
     );
   }
 
-  _buildBody() {
+  _buildBody(HomeBlocState state) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -305,7 +300,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: Dimensions.height_12,
             ),
-            allUserDetails()
+            allUserDetails(state)
             // Expanded(
             //   child: allUserDetails(),
             // ),
@@ -315,13 +310,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget allUserDetails() {
+  Widget allUserDetails(HomeBlocState state) {
     return ListView.separated(
-      itemCount: Injector.instance<HomeBloc>().state.courseList!.length,
+      itemCount: state.courseList!.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        var courses = Injector.instance<HomeBloc>().state.courseList![index];
+        var courses = state.courseList![index];
         return InkWell(
           onTap: () => Injector.instance<HomeBloc>()
               .add(ClickCourse(id: courses.id ?? "", context: context)),

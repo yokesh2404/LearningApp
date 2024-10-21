@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kurups_app/entity/chapters/chapters_response.dart';
 import 'package:kurups_app/entity/home/course_details.dart';
+import 'package:kurups_app/entity/lessons/lessons_response.dart';
 import 'package:kurups_app/entity/request/user_details/user_details.dart';
 import 'package:kurups_app/service/firebase_services/firebase_database/database_keys.dart';
 import 'package:kurups_app/utils/constants/shared_pref_keys.dart';
@@ -84,6 +88,27 @@ class FirebaseDatabaseService {
       return _chapters;
     } catch (e) {
       return _chapters;
+    }
+  }
+
+  Future<LessonsResponse> getLessonsById(
+      {required String docId, required String collection}) async {
+    LessonsResponse _lessons = LessonsResponse();
+
+    try {
+      var _data = await _firestore
+          .collection(DatabaseKeys.courses)
+          .doc(docId)
+          .collection(collection)
+          .get();
+
+      var snapshot = await _data.docs.first;
+
+      _lessons = LessonsResponse.fromJson(snapshot.data());
+
+      return _lessons;
+    } catch (e) {
+      return _lessons;
     }
   }
 }

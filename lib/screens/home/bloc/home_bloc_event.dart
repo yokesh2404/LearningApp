@@ -15,3 +15,12 @@ class ClickCourse extends HomeBlocEvent {
     required this.context,
   });
 }
+
+class DrawerClickEvent extends HomeBlocEvent {
+  final int index;
+  final BuildContext context;
+  DrawerClickEvent({
+    required this.index,
+    required this.context,
+  });
+}

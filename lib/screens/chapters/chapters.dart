@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kurups_app/injector/injector.dart';
 import 'package:kurups_app/screens/chapters/bloc/chapters_bloc.dart';
-import 'package:kurups_app/screens/chapters/subchapter.dart';
+import 'package:kurups_app/screens/lessons/subchapter.dart';
+import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
 import 'package:kurups_app/utils/constants/app_string.dart';
 import 'package:kurups_app/utils/constants/colors.dart';
+import 'package:kurups_app/utils/helper/route_helper.dart';
 import 'package:kurups_app/widgets/appbar_widget.dart';
 
 class BasicPage extends StatelessWidget {
@@ -60,6 +62,11 @@ class BasicPage extends StatelessWidget {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
+                  GoRouter.of(context).pushNamed(RouteHelper.lessonsName,
+                      extra: {
+                        "course": chapterId,
+                        "selectedChapter": state.chapters[index].id ?? ""
+                      });
                   // Navigate to the SubPage for the clicked chapter
                 },
                 child: Container(
