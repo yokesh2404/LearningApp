@@ -1,10 +1,13 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kurups_app/data/auth_repo/auth_repo.dart';
 import 'package:kurups_app/data/database_repo/database_repo.dart';
 import 'package:kurups_app/entity/lessons/lessons_response.dart';
 import 'package:kurups_app/service/log_services/log_service.dart';
 import 'package:kurups_app/utils/bloc_core/ui_status.dart';
+import 'package:kurups_app/utils/helper/route_helper.dart';
 
 part 'lessons_event.dart';
 part 'lessons_state.dart';
@@ -24,6 +27,7 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
     _logService = logService;
     on<LessonsEvent>((event, emit) {});
     on<GetLessons>((event, emit) => getLessons(event, emit));
+    on<ClickLessons>((event, emit) => clickLessons(event, emit));
   }
 
   void getLessons(GetLessons event, Emitter emit) async {
@@ -39,5 +43,12 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
     } else {
       emit(state.copyWith(status: UIStatus.loadFailed()));
     }
+  }
+
+  void clickLessons(ClickLessons event, Emitter emit) {
+    Map finalReq = {...event.databasePath, ...event.data.toJson()};
+
+    GoRouter.of(event.context)
+        .pushNamed(RouteHelper.videoScreenName, extra: finalReq);
   }
 }

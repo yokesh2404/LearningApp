@@ -227,29 +227,37 @@ class LessonsScreen extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         var data = state.lessonsResponse!.data![index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            gradient: const LinearGradient(
-                              colors: [AppColors.primary, Colors.greenAccent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                        return InkWell(
+                          onTap: () {
+                            Injector.instance<LessonsBloc>().add(ClickLessons(
+                                databasePath: path,
+                                data: data,
+                                context: context));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              gradient: const LinearGradient(
+                                colors: [AppColors.primary, Colors.greenAccent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
                             ),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              "${data.title}",
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
+                            child: ListTile(
+                              title: Text(
+                                "${data.title}",
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              leading: const Icon(Icons.book_rounded,
+                                  color: Colors.white),
+                              trailing: const Icon(Icons.play_circle_sharp,
+                                  color: AppColors.warning),
                             ),
-                            leading: const Icon(Icons.book_rounded,
-                                color: Colors.white),
-                            trailing: const Icon(Icons.play_circle_sharp,
-                                color: AppColors.warning),
                           ),
                         );
                       },

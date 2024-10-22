@@ -311,56 +311,58 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget allUserDetails(HomeBlocState state) {
-    return ListView.separated(
-      itemCount: state.courseList!.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        var courses = state.courseList![index];
-        return InkWell(
-          onTap: () => Injector.instance<HomeBloc>()
-              .add(ClickCourse(id: courses.id ?? "", context: context)),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            padding: const EdgeInsets.all(Dimensions.size_20),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    height: Dimensions.height_40,
-                    width: Dimensions.width_40,
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      AppImages.diamond,
-                      height: Dimensions.height_30,
-                      width: Dimensions.width_30,
+    return state.courseList != null && state.courseList!.isNotEmpty
+        ? ListView.separated(
+            itemCount: state.courseList!.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              var courses = state.courseList![index];
+              return InkWell(
+                onTap: () => Injector.instance<HomeBloc>()
+                    .add(ClickCourse(id: courses.id ?? "", context: context)),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: const LinearGradient(
+                      colors: [AppColors.primary, AppColors.secondary],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
-                  Text("${courses.title}",
-                      style: const TextStyle(
-                        color: AppColors.white,
-                      )),
-                  CircleAvatar(
-                    backgroundColor: AppColors.white,
-                    child: Image.asset(AppImages.play),
-                  )
-                ]),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(
-          height: Dimensions.height_12,
-        );
-      },
-    );
+                  padding: const EdgeInsets.all(Dimensions.size_20),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: Dimensions.height_40,
+                          width: Dimensions.width_40,
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            AppImages.diamond,
+                            height: Dimensions.height_30,
+                            width: Dimensions.width_30,
+                          ),
+                        ),
+                        Text("${courses.title}",
+                            style: const TextStyle(
+                              color: AppColors.white,
+                            )),
+                        CircleAvatar(
+                          backgroundColor: AppColors.white,
+                          child: Image.asset(AppImages.play),
+                        )
+                      ]),
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const SizedBox(
+                height: Dimensions.height_12,
+              );
+            },
+          )
+        : const SizedBox();
   }
 }
 

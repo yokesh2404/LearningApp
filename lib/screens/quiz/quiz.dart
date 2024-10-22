@@ -1,7 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kurups_app/injector/injector.dart';
 import 'package:kurups_app/screens/chapters/chapters.dart';
+import 'package:kurups_app/screens/quiz/bloc/quizz_bloc.dart';
+import 'package:kurups_app/screens/quiz/provider/quizz_provider.dart';
+import 'package:kurups_app/utils/constants/app_string.dart';
 import 'package:kurups_app/utils/constants/colors.dart';
+import 'package:kurups_app/utils/dimension/dimension.dart';
+import 'package:kurups_app/utils/helper/box_decorations.dart';
+import 'package:kurups_app/widgets/appbar_widget.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -26,6 +34,7 @@ class _QuizScreenState extends State<QuizScreen> {
   final List<String> options = ["Paris", "London", "Rome", "Berlin"];
   final int correctAnswerIndex = 0; // Correct answer index
 
+  QuizzProvider provider = QuizzProvider();
   @override
   void initState() {
     super.initState();
@@ -98,138 +107,235 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Self Assessment Test',
-          style: TextStyle(color: AppColors.onPrimary),
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.primary,
+    return BlocProvider(
+      create: (context) {
+        return Injector.instance<QuizzBloc>();
+      },
+      child: BlocConsumer<QuizzBloc, QuizzState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppbarWithTotalfare(
+                onBackAction: () {}, appbarTitle: AppString.selfAssesment),
+            body: _buildBody(),
+          );
+        },
+        listener: (context, state) {},
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text('(To be answered in 5 Minutes)',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
-            const Text(
-                'After working out in seperate sheet of paper,Point out the answer from the 4 options by clicking your answer.',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
-            SizedBox(height: 50),
-            // Row for timers in separate boxes
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    );
+  }
+
+  _buildBody() {
+    return BlocBuilder<QuizzBloc, QuizzState>(
+      builder: (context, state) {
+        // return state.status.when(initial: () {
+        //   return SizedBox();
+        // }, loading: () {
+        //   return SizedBox();
+        // }, loadFailed: () {
+        //   return SizedBox();
+        // }, loadSuccess: () {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text('To be answered in 5 Minutes',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.secondary),
+                  textAlign: TextAlign.center),
+              const Text(
+                  'After working out in seperate sheet of paper,Point out the answer from the 4 options by clicking your answer.',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 10),
+              // Row for timers in separate boxes
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left Timer: Time Taken
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Time Used: $_elapsedTime',
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary),
+                    ),
+                  ),
+                  // Right Timer: Remaining Time
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Remaining Time: ${_formatTime(_remainingTime)}',
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ListenableBuilder(
+                builder: (context, child) {
+                  return _buildQuestionsWidget();
+                },
+                listenable: provider,
+              )
+              // Question
+//               Text(
+//                 question,
+//                 style:
+//                     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+//               ),
+//               const SizedBox(height: 20),
+//               // Row containing 4 options
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                 children: List.generate(options.length, (index) {
+//                   String option = options[index];
+//                   String alphabet = String.fromCharCode(65 + index);
+//                   // A, B, C, D, etc.
+
+//                   // Determine button color based on answer status
+//                   if (_answered) {
+//                     if (_selectedAnswers[0] == index) {
+// // Wrong answer turns red
+//                     } else {
+// // Unselected answers stay grey
+//                     }
+//                   } else {
+// // Default color for unselected answers
+//                   }
+
+//                   return Column(
+//                     children: [
+//                       Text(
+//                         alphabet, // Display alphabet above the option
+//                         style: const TextStyle(
+//                             fontSize: 18, fontWeight: FontWeight.bold),
+//                       ),
+//                       ElevatedButton(
+//                         onPressed: _answered
+//                             ? null
+//                             : () =>
+//                                 _selectAnswer(index), // Disable after answer
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor:
+//                               (int index) {}(index), // Set button color
+//                           fixedSize: const Size(200, 50), // Set button size
+//                         ),
+//                         child: Text(
+//                           option,
+//                           style: const TextStyle(
+//                               color: AppColors.onSecondary, fontSize: 16),
+//                         ),
+//                       ),
+//                     ],
+//                   );
+//                 }),
+//               ),
+//               const SizedBox(
+//                 height: 20,
+//                 width: 30,
+//               ),
+//               // Submit button (only shows when an answer is selected)
+//               if (_answered)
+//                 ElevatedButton(
+//                   onPressed: _submitQuiz,
+//                   child: const Text('Submit'),
+//                 )
+//               else
+//                 Container(), // Hide submit button until answered
+            ],
+          ),
+        );
+        // }
+        // );
+      },
+    );
+  }
+
+  Widget _buildQuestionsWidget() {
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return Container(
+            padding: const EdgeInsets.all(Dimensions.size_10),
+            decoration: BoxDecorations.decorationWithShadow(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left Timer: Time Taken
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: const BoxDecoration(color: AppColors.primary
-                      // Background color for time taken
-                      ),
-                  child: Text(
-                    'Time Used: $_elapsedTime',
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onPrimary),
-                  ),
+                RichText(
+                    text: TextSpan(
+                        text: '${index + 1}.',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: Dimensions.size_16,
+                            fontWeight: FontWeight.w600),
+                        children: [TextSpan(text: "quesion ${index + 1}")])),
+                const SizedBox(
+                  height: Dimensions.size_10,
                 ),
-                // Right Timer: Remaining Time
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    // Background color for remaining time
-                  ),
-                  child: Text(
-                    'Remaining Time: ${_formatTime(_remainingTime)}',
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onPrimary),
-                  ),
-                ),
+                _buildAnsweres(index)
               ],
             ),
-            const SizedBox(height: 20),
-            // Question
-            Text(
-              question,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            // Row containing 4 options
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(options.length, (index) {
-                String option = options[index];
-                String alphabet = String.fromCharCode(65 + index);
-                // A, B, C, D, etc.
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: Dimensions.height_12,
+          );
+        },
+        itemCount: 5);
+  }
 
-                // Determine button color based on answer status
-                if (_answered) {
-                  if (_selectedAnswers[0] == index) {
-// Wrong answer turns red
-                  } else {
-// Unselected answers stay grey
-                  }
-                } else {
-// Default color for unselected answers
-                }
-
-                return Column(
-                  children: [
-                    Text(
-                      alphabet, // Display alphabet above the option
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    ElevatedButton(
-                      onPressed: _answered
-                          ? null
-                          : () => _selectAnswer(index), // Disable after answer
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            (int index) {}(index), // Set button color
-                        fixedSize: const Size(200, 50), // Set button size
-                      ),
-                      child: Text(
-                        option,
-                        style: const TextStyle(
-                            color: AppColors.onSecondary, fontSize: 16),
-                      ),
-                    ),
-                  ],
-                );
-              }),
+  _buildAnsweres(int questionIndex) {
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              provider.updatuserAns(
+                  quesionIndex: questionIndex, ansIndex: index);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(Dimensions.size_10),
+              decoration: BoxDecorations.decorationWithShadow(),
+              child: ListTile(
+                leading: Container(
+                  height: 24,
+                  width: 24,
+                  decoration: BoxDecorations.decorationwithShape(
+                      backgroundColor: provider.isCorrectAns(questionIndex) &&
+                              index == provider.ansIndex(questionIndex)
+                          ? AppColors.green
+                          : AppColors.borderPrimary.withOpacity(0.2),
+                      borderColor: provider.isCorrectAns(questionIndex)
+                          ? AppColors.green
+                          : AppColors.borderPrimary),
+                ),
+                title: RichText(
+                    text: TextSpan(
+                        text: '${index + 1}.',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: Dimensions.size_14,
+                            fontWeight: FontWeight.w400),
+                        children: [TextSpan(text: "ans ${index + 1}")])),
+              ),
             ),
-            const SizedBox(
-              height: 20,
-              width: 30,
-            ),
-            // Submit button (only shows when an answer is selected)
-            if (_answered)
-              ElevatedButton(
-                onPressed: _submitQuiz,
-                child: const Text('Submit'),
-              )
-            else
-              Container(), // Hide submit button until answered
-          ],
-        ),
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => BasicPage(),
-      //       )),
-      // ),
-    );
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: Dimensions.size_08,
+          );
+        },
+        itemCount: 4);
   }
 }
 

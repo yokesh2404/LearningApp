@@ -3,6 +3,8 @@ import 'package:kurups_app/screens/chapters/chapters.dart';
 import 'package:kurups_app/screens/lessons/subchapter.dart';
 import 'package:kurups_app/screens/home/view/home.dart';
 import 'package:kurups_app/screens/login/login.dart';
+import 'package:kurups_app/screens/playscreen/playscreen.dart';
+import 'package:kurups_app/screens/quiz/quiz.dart';
 import 'package:kurups_app/screens/register/register.dart';
 import 'package:kurups_app/screens/splash/splash.dart';
 
@@ -21,6 +23,10 @@ class RouteHelper {
   static const String courseChapterPath = '/courseChapter';
   static const String lessonsName = 'lessons';
   static const String lessonsPath = '/lessons';
+  static const String videoScreenName = 'videoScreen';
+  static const String videoScreenPath = '/videoScreen';
+  static const String quizzScreenName = 'quizzScreen';
+  static const String quizzScreenPath = '/quizzScreen';
 
   static GoRouter get router => _router;
   static final _router = GoRouter(
@@ -69,6 +75,24 @@ class RouteHelper {
           return LessonsScreen(
             path: state.extra as Map,
           );
+        },
+      ),
+      GoRoute(
+        name: videoScreenName,
+        path: videoScreenPath,
+        builder: (context, state) {
+          var data = state.extra as Map;
+          return PlayScreen(
+            videoUrl: data['video'],
+            path: data,
+          );
+        },
+      ),
+      GoRoute(
+        name: quizzScreenName,
+        path: quizzScreenPath,
+        builder: (context, state) {
+          return const QuizScreen();
         },
       )
     ],
