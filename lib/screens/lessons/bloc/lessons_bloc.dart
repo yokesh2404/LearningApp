@@ -45,9 +45,9 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
     }
   }
 
-  void clickLessons(ClickLessons event, Emitter emit) {
+  void clickLessons(ClickLessons event, Emitter emit) async {
     Map finalReq = {...event.databasePath, ...event.data.toJson()};
-
+    // await _databaseService.getQuestionsById(path: {});
     GoRouter.of(event.context)
         .pushNamed(RouteHelper.videoScreenName, extra: finalReq);
   }

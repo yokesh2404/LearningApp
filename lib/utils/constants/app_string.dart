@@ -20,6 +20,7 @@ class AppString {
   static const String myCourses = "My Courses";
   static const String lessons = "Lessons";
   static const String selfAssesment = "Self Assessment Test";
+  static const String submit = "Submit";
 
 // Contents
   static const String videoScreenContent =

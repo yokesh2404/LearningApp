@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 
 class QuizzProvider extends ChangeNotifier {
-  Map<int, int> _userAns = {};
-  Map<int, int> get userAns => _userAns;
+  Map<int, String> _userAns = {};
+  Map<int, String> get userAns => _userAns;
 
-  updatuserAns({required int quesionIndex, required int ansIndex}) {
-    _userAns[quesionIndex] = ansIndex;
+  updatuserAns(
+      {required int quesionIndex,
+      required int ansIndex,
+      required List<String> answers}) {
+    if (_userAns[quesionIndex] == null) {
+      _userAns[quesionIndex] = answers[ansIndex];
+    }
+    print(userAns.length);
     notifyListeners();
   }
 
-  bool isCorrectAns(int quesionIndex) {
-    return userAns[quesionIndex] == 3;
+  bool isCorrectAns(int quesionIndex, int ansIndex, List<String> answers) {
+    return userAns[quesionIndex] == answers[ansIndex];
   }
 
-  int ansIndex(int quesionIndex) {
-    return userAns[quesionIndex] ?? 0;
+  bool checkAnsisCorrect(int quesionIndex, String correctAnswere) {
+    return userAns[quesionIndex] == correctAnswere;
   }
 }

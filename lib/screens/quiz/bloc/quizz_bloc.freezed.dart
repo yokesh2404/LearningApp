@@ -17,6 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$QuizzState {
   UIStatus get status => throw _privateConstructorUsedError;
+  QuestionsResponse? get questionsResponse =>
+      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $QuizzStateCopyWith<QuizzState> get copyWith =>
@@ -29,7 +31,7 @@ abstract class $QuizzStateCopyWith<$Res> {
           QuizzState value, $Res Function(QuizzState) then) =
       _$QuizzStateCopyWithImpl<$Res, QuizzState>;
   @useResult
-  $Res call({UIStatus status});
+  $Res call({UIStatus status, QuestionsResponse? questionsResponse});
 
   $UIStatusCopyWith<$Res> get status;
 }
@@ -48,12 +50,17 @@ class _$QuizzStateCopyWithImpl<$Res, $Val extends QuizzState>
   @override
   $Res call({
     Object? status = null,
+    Object? questionsResponse = freezed,
   }) {
     return _then(_value.copyWith(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
+      questionsResponse: freezed == questionsResponse
+          ? _value.questionsResponse
+          : questionsResponse // ignore: cast_nullable_to_non_nullable
+              as QuestionsResponse?,
     ) as $Val);
   }
 
@@ -74,7 +81,7 @@ abstract class _$$QuizzStateImplCopyWith<$Res>
       __$$QuizzStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UIStatus status});
+  $Res call({UIStatus status, QuestionsResponse? questionsResponse});
 
   @override
   $UIStatusCopyWith<$Res> get status;
@@ -92,12 +99,17 @@ class __$$QuizzStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
+    Object? questionsResponse = freezed,
   }) {
     return _then(_$QuizzStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
+      questionsResponse: freezed == questionsResponse
+          ? _value.questionsResponse
+          : questionsResponse // ignore: cast_nullable_to_non_nullable
+              as QuestionsResponse?,
     ));
   }
 }
@@ -105,15 +117,18 @@ class __$$QuizzStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$QuizzStateImpl implements _QuizzState {
-  const _$QuizzStateImpl({this.status = const UIStatus.initial()});
+  const _$QuizzStateImpl(
+      {this.status = const UIStatus.initial(), this.questionsResponse});
 
   @override
   @JsonKey()
   final UIStatus status;
+  @override
+  final QuestionsResponse? questionsResponse;
 
   @override
   String toString() {
-    return 'QuizzState(status: $status)';
+    return 'QuizzState(status: $status, questionsResponse: $questionsResponse)';
   }
 
   @override
@@ -121,11 +136,13 @@ class _$QuizzStateImpl implements _QuizzState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$QuizzStateImpl &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.questionsResponse, questionsResponse) ||
+                other.questionsResponse == questionsResponse));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status);
+  int get hashCode => Object.hash(runtimeType, status, questionsResponse);
 
   @JsonKey(ignore: true)
   @override
@@ -135,10 +152,14 @@ class _$QuizzStateImpl implements _QuizzState {
 }
 
 abstract class _QuizzState implements QuizzState {
-  const factory _QuizzState({final UIStatus status}) = _$QuizzStateImpl;
+  const factory _QuizzState(
+      {final UIStatus status,
+      final QuestionsResponse? questionsResponse}) = _$QuizzStateImpl;
 
   @override
   UIStatus get status;
+  @override
+  QuestionsResponse? get questionsResponse;
   @override
   @JsonKey(ignore: true)
   _$$QuizzStateImplCopyWith<_$QuizzStateImpl> get copyWith =>

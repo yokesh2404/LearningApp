@@ -92,6 +92,7 @@ class Dimensions {
   static double height_30 = getHeight(30);
   static double height_5 = getHeight(5);
   static double height_40 = getHeight(40);
+
   static double height_60 = getHeight(60);
   static double height_70 = getHeight(70);
   static double height_75 = getHeight(75);

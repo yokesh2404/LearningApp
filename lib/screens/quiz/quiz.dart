@@ -1,38 +1,40 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kurups_app/injector/injector.dart';
 import 'package:kurups_app/screens/chapters/chapters.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_bloc.dart';
+import 'package:kurups_app/screens/quiz/bloc/quizz_event.dart';
 import 'package:kurups_app/screens/quiz/provider/quizz_provider.dart';
 import 'package:kurups_app/utils/constants/app_string.dart';
 import 'package:kurups_app/utils/constants/colors.dart';
 import 'package:kurups_app/utils/dimension/dimension.dart';
 import 'package:kurups_app/utils/helper/box_decorations.dart';
 import 'package:kurups_app/widgets/appbar_widget.dart';
+import 'package:kurups_app/widgets/button_widget.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key});
+  const QuizScreen({super.key, required this.path});
 
+  final Map path;
   @override
   // ignore: library_private_types_in_public_api
   _QuizScreenState createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  final Stopwatch _stopwatch = Stopwatch(); // For tracking time taken
+  // For tracking time taken
   Timer? _timer;
-  Duration _remainingTime =
-      const Duration(minutes: 1); // Countdown timer (1 minute)
-  String _elapsedTime = '00:00'; // Time taken
-  bool _answered = false; // Check if an answer is selected
-  final List<int?> _selectedAnswers =
-      List.filled(1, null); // Track selected answer
 
-  // Sample question and options
-  final String question = "What is the capital of France?";
-  final List<String> options = ["Paris", "London", "Rome", "Berlin"];
-  final int correctAnswerIndex = 0; // Correct answer index
+  int _totalTime = (5 * 60);
+  int usedTime = 0;
+
+  String formattedTime({bool isUsedTime = false}) {
+    int minutes = isUsedTime ? usedTime ~/ 60 : _totalTime ~/ 60;
+    int seconds = isUsedTime ? usedTime % 60 : _totalTime % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
 
   QuizzProvider provider = QuizzProvider();
   @override
@@ -49,49 +51,34 @@ class _QuizScreenState extends State<QuizScreen> {
 
   // Function to start stopwatch and countdown timer
   void _startTimer() {
-    _stopwatch.start();
+    // _stopwatch.start();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _elapsedTime = _formatTime(_stopwatch.elapsed); // Update elapsed time
-        if (_remainingTime.inSeconds > 0) {
-          _remainingTime -=
-              const Duration(seconds: 1); // Decrease remaining time
-        } else {
-          _timer?.cancel(); // Stop the timer when time runs out
-          _submitQuiz(); // Submit the quiz automatically
-        }
-      });
+      if (_totalTime > 0) {
+        setState(() {
+          _totalTime--;
+          usedTime++;
+        });
+      } else {
+        _submitQuiz();
+      }
     });
-  }
-
-  // Format time as mm:ss
-  String _formatTime(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String minutes = twoDigits(duration.inMinutes.remainder(60));
-    String seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
   }
 
   // Select an answer
-  void _selectAnswer(int index) {
-    setState(() {
-      _selectedAnswers[0] = index;
-      _answered = true;
-    });
-  }
 
   // Submit the quiz (called when time runs out or user submits)
   void _submitQuiz() {
-    _stopwatch.stop(); // Stop the stopwatch
     _timer?.cancel(); // Cancel the countdown timer
+    _totalTime = (5 * 60);
+    usedTime = 0;
+    setState(() {});
 
-    // Display result in a dialog
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Quiz Completed!'),
         content: Text(
-          'Time Left: $_elapsedTime\nRemaining Time: ${_formatTime(_remainingTime)}',
+          'Time Left: ${formattedTime(isUsedTime: false)}\nRemaining Time: ${formattedTime(isUsedTime: true)}',
         ),
         actions: [
           TextButton(
@@ -109,13 +96,17 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-        return Injector.instance<QuizzBloc>();
+        return Injector.instance<QuizzBloc>()
+          ..add(GetQuestions(path: widget.path));
       },
       child: BlocConsumer<QuizzBloc, QuizzState>(
         builder: (context, state) {
           return Scaffold(
             appBar: AppbarWithTotalfare(
-                onBackAction: () {}, appbarTitle: AppString.selfAssesment),
+                onBackAction: () {
+                  context.pop();
+                },
+                appbarTitle: AppString.selfAssesment),
             body: _buildBody(),
           );
         },
@@ -124,232 +115,250 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  _buildBody() {
+  Widget _buildBody() {
     return BlocBuilder<QuizzBloc, QuizzState>(
       builder: (context, state) {
-        // return state.status.when(initial: () {
-        //   return SizedBox();
-        // }, loading: () {
-        //   return SizedBox();
-        // }, loadFailed: () {
-        //   return SizedBox();
-        // }, loadSuccess: () {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text('To be answered in 5 Minutes',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.secondary),
-                  textAlign: TextAlign.center),
-              const Text(
-                  'After working out in seperate sheet of paper,Point out the answer from the 4 options by clicking your answer.',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 10),
-              // Row for timers in separate boxes
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Left Timer: Time Taken
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Time Used: $_elapsedTime',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary),
+        return state.status.when(
+          initial: () {
+            return const SizedBox();
+          },
+          loadFailed: () {
+            return const SizedBox();
+          },
+          loadSuccess: () {
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text('To be answered in 5 Minutes',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.secondary),
+                            textAlign: TextAlign.center),
+                        const Text(
+                            'After working out in seperate sheet of paper,Point out the answer from the 4 options by clicking your answer.',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.center),
+                        const SizedBox(height: 10),
+                        // Row for timers in separate boxes
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Left Timer: Time Taken
+                            Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Time Used: ${formattedTime(isUsedTime: true)}',
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary),
+                              ),
+                            ),
+                            // Right Timer: Remaining Time
+                            Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Remaining Time: ${formattedTime(isUsedTime: false)}',
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        ListenableBuilder(
+                          builder: (context, child) {
+                            return _buildQuestionsWidget();
+                          },
+                          listenable: provider,
+                        )
+                      ],
                     ),
                   ),
-                  // Right Timer: Remaining Time
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Remaining Time: ${_formatTime(_remainingTime)}',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary),
-                    ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    decoration: BoxDecorations.decorationWithShadow(
+                        radius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12))),
+                    padding: const EdgeInsets.all(Dimensions.size_12),
+                    child: ButtonWidget(
+                        backgroundColor: provider.userAns.length ==
+                                state.questionsResponse!.data!.length
+                            ? AppColors.primary
+                            : AppColors.borderPrimary,
+                        borderColor: provider.userAns.length ==
+                                state.questionsResponse!.data!.length
+                            ? AppColors.primary
+                            : AppColors.borderPrimary,
+                        height: Dimensions.height_48,
+                        onClick: () {
+                          if (provider.userAns.length ==
+                              state.questionsResponse!.data!.length) {}
+                        },
+                        buttonText: AppString.submit),
                   ),
-                ],
+                )
+              ],
+            );
+          },
+          loading: () {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
               ),
-              const SizedBox(height: 20),
-              ListenableBuilder(
-                builder: (context, child) {
-                  return _buildQuestionsWidget();
-                },
-                listenable: provider,
-              )
-              // Question
-//               Text(
-//                 question,
-//                 style:
-//                     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-//               ),
-//               const SizedBox(height: 20),
-//               // Row containing 4 options
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: List.generate(options.length, (index) {
-//                   String option = options[index];
-//                   String alphabet = String.fromCharCode(65 + index);
-//                   // A, B, C, D, etc.
-
-//                   // Determine button color based on answer status
-//                   if (_answered) {
-//                     if (_selectedAnswers[0] == index) {
-// // Wrong answer turns red
-//                     } else {
-// // Unselected answers stay grey
-//                     }
-//                   } else {
-// // Default color for unselected answers
-//                   }
-
-//                   return Column(
-//                     children: [
-//                       Text(
-//                         alphabet, // Display alphabet above the option
-//                         style: const TextStyle(
-//                             fontSize: 18, fontWeight: FontWeight.bold),
-//                       ),
-//                       ElevatedButton(
-//                         onPressed: _answered
-//                             ? null
-//                             : () =>
-//                                 _selectAnswer(index), // Disable after answer
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor:
-//                               (int index) {}(index), // Set button color
-//                           fixedSize: const Size(200, 50), // Set button size
-//                         ),
-//                         child: Text(
-//                           option,
-//                           style: const TextStyle(
-//                               color: AppColors.onSecondary, fontSize: 16),
-//                         ),
-//                       ),
-//                     ],
-//                   );
-//                 }),
-//               ),
-//               const SizedBox(
-//                 height: 20,
-//                 width: 30,
-//               ),
-//               // Submit button (only shows when an answer is selected)
-//               if (_answered)
-//                 ElevatedButton(
-//                   onPressed: _submitQuiz,
-//                   child: const Text('Submit'),
-//                 )
-//               else
-//                 Container(), // Hide submit button until answered
-            ],
-          ),
+            );
+          },
         );
-        // }
-        // );
       },
     );
   }
 
   Widget _buildQuestionsWidget() {
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Container(
-            padding: const EdgeInsets.all(Dimensions.size_10),
-            decoration: BoxDecorations.decorationWithShadow(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                    text: TextSpan(
-                        text: '${index + 1}.',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            fontSize: Dimensions.size_16,
-                            fontWeight: FontWeight.w600),
-                        children: [TextSpan(text: "quesion ${index + 1}")])),
-                const SizedBox(
-                  height: Dimensions.size_10,
+    return BlocBuilder<QuizzBloc, QuizzState>(
+      builder: (context, state) {
+        return ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              var _data = state.questionsResponse!.data![index];
+              return Container(
+                padding: const EdgeInsets.all(Dimensions.size_10),
+                decoration: BoxDecorations.decorationWithShadow(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _data.question ?? "",
+                      maxLines: 10,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    // RichText(
+                    //     text: TextSpan(
+
+                    //   text: '${_data.question}.',
+                    //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    //       fontSize: Dimensions.size_16,
+                    //       fontWeight: FontWeight.w600),
+                    // )),
+                    const SizedBox(
+                      height: Dimensions.size_16,
+                    ),
+                    _buildAnsweres(index)
+                  ],
                 ),
-                _buildAnsweres(index)
-              ],
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: Dimensions.height_12,
-          );
-        },
-        itemCount: 5);
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(
+                height: Dimensions.height_12,
+              );
+            },
+            itemCount: state.questionsResponse!.data!.length);
+      },
+    );
   }
 
   _buildAnsweres(int questionIndex) {
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              provider.updatuserAns(
-                  quesionIndex: questionIndex, ansIndex: index);
-            },
-            child: Container(
-              padding: const EdgeInsets.all(Dimensions.size_10),
-              decoration: BoxDecorations.decorationWithShadow(),
-              child: ListTile(
-                leading: Container(
-                  height: 24,
-                  width: 24,
-                  decoration: BoxDecorations.decorationwithShape(
-                      backgroundColor: provider.isCorrectAns(questionIndex) &&
-                              index == provider.ansIndex(questionIndex)
-                          ? AppColors.green
-                          : AppColors.borderPrimary.withOpacity(0.2),
-                      borderColor: provider.isCorrectAns(questionIndex)
-                          ? AppColors.green
-                          : AppColors.borderPrimary),
+    return BlocBuilder<QuizzBloc, QuizzState>(
+      builder: (context, state) {
+        return ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              var _data =
+                  state.questionsResponse!.data![questionIndex].answers![index];
+              return InkWell(
+                onTap: () {
+                  provider.updatuserAns(
+                      quesionIndex: questionIndex,
+                      ansIndex: index,
+                      answers: state
+                          .questionsResponse!.data![questionIndex].answers!);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(Dimensions.size_10),
+                  decoration: BoxDecorations.decorationWithShadow(
+                      decColor: provider.isCorrectAns(
+                                  questionIndex,
+                                  index,
+                                  state.questionsResponse!.data![questionIndex]
+                                      .answers!) &&
+                              provider.checkAnsisCorrect(
+                                  questionIndex,
+                                  state.questionsResponse!.data![questionIndex]
+                                          .correctAnswere ??
+                                      "")
+                          ? AppColors.green.withOpacity(0.9)
+                          : provider.isCorrectAns(
+                                  questionIndex,
+                                  index,
+                                  state.questionsResponse!.data![questionIndex]
+                                      .answers!)
+                              ? AppColors.red.withOpacity(0.9)
+                              : AppColors.white),
+                  child: ListTile(
+                    leading: Container(
+                      height: 24,
+                      width: 24,
+                      decoration: BoxDecorations.decorationwithShape(
+                          borderColor: provider.isCorrectAns(
+                                  questionIndex,
+                                  index,
+                                  state.questionsResponse!.data![questionIndex]
+                                      .answers!)
+                              ? AppColors.primary
+                              : AppColors.borderPrimary),
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 16,
+                        width: 16,
+                        decoration: BoxDecorations.decorationwithShape(
+                          backgroundColor: provider.isCorrectAns(
+                                  questionIndex,
+                                  index,
+                                  state.questionsResponse!.data![questionIndex]
+                                      .answers!)
+                              ? AppColors.primary
+                              : AppColors.borderPrimary.withOpacity(0.2),
+                        ),
+                      ),
+                    ),
+                    title: RichText(
+                        text: TextSpan(
+                            text: '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                    fontSize: Dimensions.size_14,
+                                    fontWeight: FontWeight.w400),
+                            children: [TextSpan(text: _data)])),
+                  ),
                 ),
-                title: RichText(
-                    text: TextSpan(
-                        text: '${index + 1}.',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            fontSize: Dimensions.size_14,
-                            fontWeight: FontWeight.w400),
-                        children: [TextSpan(text: "ans ${index + 1}")])),
-              ),
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: Dimensions.size_08,
-          );
-        },
-        itemCount: 4);
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(
+                height: Dimensions.size_08,
+              );
+            },
+            itemCount:
+                state.questionsResponse!.data![questionIndex].answers!.length);
+      },
+    );
   }
 }
-
-//Determine button color based on answer status
-// Color buttonColor;
-// if (_answered) {
-//   if (_selectedAnswers[0] == index) {
-//     buttonColor = index == correctAnswerIndex
-//         ? Colors.green // Correct answer turns green
-//         : Colors.red; // Wrong answer turns red
-//   } else {
-//     buttonColor = Colors.grey; // Unselected answers stay grey
-//   }
-// } else {
-//   buttonColor =
-//       Colors.teal; // Default color for unselected answers
-// }

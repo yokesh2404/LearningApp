@@ -92,7 +92,9 @@ class RouteHelper {
         name: quizzScreenName,
         path: quizzScreenPath,
         builder: (context, state) {
-          return const QuizScreen();
+          return QuizScreen(
+            path: state.extra as Map,
+          );
         },
       )
     ],

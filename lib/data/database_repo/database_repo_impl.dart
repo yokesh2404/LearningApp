@@ -3,6 +3,7 @@ import 'package:kurups_app/data/database_repo/database_repo.dart';
 import 'package:kurups_app/entity/chapters/chapters_response.dart';
 import 'package:kurups_app/entity/home/course_details.dart';
 import 'package:kurups_app/entity/lessons/lessons_response.dart';
+import 'package:kurups_app/entity/quizz/questions_response.dart';
 import 'package:kurups_app/entity/request/user_details/user_details.dart';
 import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
 
@@ -36,5 +37,10 @@ class DatabaseRepoImpl extends DatabaseRepo {
   Future<LessonsResponse> getLessonsById(
       {required String docId, required String collection}) async {
     return await _service.getLessonsById(docId: docId, collection: collection);
+  }
+
+  @override
+  Future<QuestionsResponse> getQuestionsById({required Map path}) async {
+    return await _service.getQuestionsById(path: path);
   }
 }
