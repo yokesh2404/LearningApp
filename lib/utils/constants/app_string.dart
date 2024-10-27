@@ -21,10 +21,13 @@ class AppString {
   static const String lessons = "Lessons";
   static const String selfAssesment = "Self Assessment Test";
   static const String submit = "Submit";
+  static const String answereHint = "Answers and Hints";
+  static const String goBackHome = "Go back to home";
 
 // Contents
   static const String videoScreenContent =
       'Post-video, users will take a 5-question multiple-choice quiz. This feature keeps them engaged and ensures they grasp the material, all within an easy-to-use and appealing mobile app.';
+  static const String selectAnswere = "Please complete your assesment!";
 }
 
 int firstNameLength = 50;

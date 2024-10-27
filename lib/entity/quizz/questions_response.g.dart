@@ -24,6 +24,7 @@ QuestionsData _$QuestionsDataFromJson(Map<String, dynamic> json) =>
       answers:
           (json['answers'] as List<dynamic>?)?.map((e) => e as String).toList(),
       correctAnswere: json['correct_answer'] as String?,
+      imageUrl: json['imageUrl'] as String?,
     );
 
 Map<String, dynamic> _$QuestionsDataToJson(QuestionsData instance) =>
@@ -31,4 +32,5 @@ Map<String, dynamic> _$QuestionsDataToJson(QuestionsData instance) =>
       'question': instance.question,
       'answers': instance.answers,
       'correct_answer': instance.correctAnswere,
+      'imageUrl': instance.imageUrl,
     };

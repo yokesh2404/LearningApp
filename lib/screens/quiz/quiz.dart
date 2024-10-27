@@ -2,14 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kurups_app/entity/quizz/questions_response.dart';
 import 'package:kurups_app/injector/injector.dart';
 import 'package:kurups_app/screens/chapters/chapters.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_bloc.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_event.dart';
-import 'package:kurups_app/screens/quiz/provider/quizz_provider.dart';
+import 'package:kurups_app/provider/quizz/quizz_provider.dart';
+import 'package:kurups_app/utils/constants/app_config.dart';
 import 'package:kurups_app/utils/constants/app_string.dart';
 import 'package:kurups_app/utils/constants/colors.dart';
 import 'package:kurups_app/utils/dimension/dimension.dart';
+import 'package:kurups_app/utils/helper/app_toast_helper.dart';
 import 'package:kurups_app/utils/helper/box_decorations.dart';
 import 'package:kurups_app/widgets/appbar_widget.dart';
 import 'package:kurups_app/widgets/button_widget.dart';
@@ -36,10 +39,13 @@ class _QuizScreenState extends State<QuizScreen> {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
+  late QuizzBloc bloc;
+
   QuizzProvider provider = QuizzProvider();
   @override
   void initState() {
     super.initState();
+    bloc = context.read<QuizzBloc>()..add(GetQuestions(path: widget.path));
     _startTimer(); // Start timers when the page loads
   }
 
@@ -59,7 +65,9 @@ class _QuizScreenState extends State<QuizScreen> {
           usedTime++;
         });
       } else {
+        // if (usedTime != 0) {
         _submitQuiz();
+        // }
       }
     });
   }
@@ -73,45 +81,31 @@ class _QuizScreenState extends State<QuizScreen> {
     usedTime = 0;
     setState(() {});
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Quiz Completed!'),
-        content: Text(
-          'Time Left: ${formattedTime(isUsedTime: false)}\nRemaining Time: ${formattedTime(isUsedTime: true)}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+    bloc.add(ClickToSubmit(
+        provider: provider,
+        context: context,
+        response: bloc.state.questionsResponse!));
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return Injector.instance<QuizzBloc>()
-          ..add(GetQuestions(path: widget.path));
-      },
-      child: BlocConsumer<QuizzBloc, QuizzState>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppbarWithTotalfare(
-                onBackAction: () {
-                  context.pop();
-                },
-                appbarTitle: AppString.selfAssesment),
-            body: _buildBody(),
-          );
-        },
-        listener: (context, state) {},
+    return BlocListener<QuizzBloc, QuizzState>(
+      child: Scaffold(
+        appBar: AppbarWithTotalfare(
+            onBackAction: () {
+              context.pop();
+            },
+            appbarTitle: AppString.selfAssesment),
+        body: _buildBody(),
       ),
+      listener: (context, state) {
+        if (state.startTimer) {
+          var isActive = _timer?.isActive ?? false;
+          if (!isActive) {
+            _startTimer();
+          }
+        }
+      },
     );
   }
 
@@ -177,7 +171,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         const SizedBox(height: 20),
                         ListenableBuilder(
                           builder: (context, child) {
-                            return _buildQuestionsWidget();
+                            return _buildQuestionsWidget(state);
                           },
                           listenable: provider,
                         )
@@ -194,18 +188,18 @@ class _QuizScreenState extends State<QuizScreen> {
                             topRight: Radius.circular(12))),
                     padding: const EdgeInsets.all(Dimensions.size_12),
                     child: ButtonWidget(
-                        backgroundColor: provider.userAns.length ==
-                                state.questionsResponse!.data!.length
-                            ? AppColors.primary
-                            : AppColors.borderPrimary,
-                        borderColor: provider.userAns.length ==
-                                state.questionsResponse!.data!.length
-                            ? AppColors.primary
-                            : AppColors.borderPrimary,
+                        backgroundColor: AppColors.primary,
+                        borderColor: AppColors.primary,
                         height: Dimensions.height_48,
                         onClick: () {
+                          // _submitQuiz();
+                          print(state.questionsResponse);
                           if (provider.userAns.length ==
-                              state.questionsResponse!.data!.length) {}
+                              state.questionsResponse!.data!.length) {
+                            _submitQuiz();
+                          } else {
+                            showToast(message: AppString.selectAnswere);
+                          }
                         },
                         buttonText: AppString.submit),
                   ),
@@ -225,140 +219,128 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildQuestionsWidget() {
-    return BlocBuilder<QuizzBloc, QuizzState>(
-      builder: (context, state) {
-        return ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              var _data = state.questionsResponse!.data![index];
-              return Container(
-                padding: const EdgeInsets.all(Dimensions.size_10),
-                decoration: BoxDecorations.decorationWithShadow(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _data.question ?? "",
-                      maxLines: 10,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                    // RichText(
-                    //     text: TextSpan(
-
-                    //   text: '${_data.question}.',
-                    //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    //       fontSize: Dimensions.size_16,
-                    //       fontWeight: FontWeight.w600),
-                    // )),
-                    const SizedBox(
-                      height: Dimensions.size_16,
-                    ),
-                    _buildAnsweres(index)
-                  ],
+  Widget _buildQuestionsWidget(QuizzState state) {
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          var _data = state.questionsResponse!.data![index];
+          return Container(
+            padding: const EdgeInsets.all(Dimensions.size_10),
+            decoration: BoxDecorations.decorationWithShadow(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _data.question ?? "",
+                  maxLines: 10,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: Dimensions.height_12,
-              );
-            },
-            itemCount: state.questionsResponse!.data!.length);
-      },
-    );
+                // RichText(
+                //     text: TextSpan(
+
+                //   text: '${_data.question}.',
+                //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                //       fontSize: Dimensions.size_16,
+                //       fontWeight: FontWeight.w600),
+                // )),
+                const SizedBox(
+                  height: Dimensions.size_16,
+                ),
+                _buildAnsweres(index, state)
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: Dimensions.height_12,
+          );
+        },
+        itemCount: state.questionsResponse!.data!.length);
   }
 
-  _buildAnsweres(int questionIndex) {
-    return BlocBuilder<QuizzBloc, QuizzState>(
-      builder: (context, state) {
-        return ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              var _data =
-                  state.questionsResponse!.data![questionIndex].answers![index];
-              return InkWell(
-                onTap: () {
-                  provider.updatuserAns(
-                      quesionIndex: questionIndex,
-                      ansIndex: index,
-                      answers: state
-                          .questionsResponse!.data![questionIndex].answers!);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(Dimensions.size_10),
-                  decoration: BoxDecorations.decorationWithShadow(
-                      decColor: provider.isCorrectAns(
-                                  questionIndex,
-                                  index,
-                                  state.questionsResponse!.data![questionIndex]
-                                      .answers!) &&
-                              provider.checkAnsisCorrect(
-                                  questionIndex,
-                                  state.questionsResponse!.data![questionIndex]
-                                          .correctAnswere ??
-                                      "")
-                          ? AppColors.green.withOpacity(0.9)
-                          : provider.isCorrectAns(
-                                  questionIndex,
-                                  index,
-                                  state.questionsResponse!.data![questionIndex]
-                                      .answers!)
-                              ? AppColors.red.withOpacity(0.9)
-                              : AppColors.white),
-                  child: ListTile(
-                    leading: Container(
-                      height: 24,
-                      width: 24,
-                      decoration: BoxDecorations.decorationwithShape(
-                          borderColor: provider.isCorrectAns(
-                                  questionIndex,
-                                  index,
-                                  state.questionsResponse!.data![questionIndex]
-                                      .answers!)
-                              ? AppColors.primary
-                              : AppColors.borderPrimary),
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 16,
-                        width: 16,
-                        decoration: BoxDecorations.decorationwithShape(
-                          backgroundColor: provider.isCorrectAns(
-                                  questionIndex,
-                                  index,
-                                  state.questionsResponse!.data![questionIndex]
-                                      .answers!)
-                              ? AppColors.primary
-                              : AppColors.borderPrimary.withOpacity(0.2),
-                        ),
-                      ),
-                    ),
-                    title: RichText(
-                        text: TextSpan(
-                            text: '',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                                    fontSize: Dimensions.size_14,
-                                    fontWeight: FontWeight.w400),
-                            children: [TextSpan(text: _data)])),
-                  ),
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: Dimensions.size_08,
-              );
-            },
-            itemCount:
-                state.questionsResponse!.data![questionIndex].answers!.length);
+  _buildAnsweres(int questionIndex, QuizzState state) {
+    var isGridView = state.questionsResponse!.data![questionIndex].answers!
+        .any((e) => e.length > 5);
+    // if (isGridView) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        var _data =
+            state.questionsResponse!.data![questionIndex].answers![index];
+        return InkWell(
+          onTap: () {
+            provider.updatuserAns(
+                quesionIndex: questionIndex,
+                ansIndex: index,
+                answers:
+                    state.questionsResponse!.data![questionIndex].answers!);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(Dimensions.size_10),
+            decoration: BoxDecorations.decorationWithShadow(
+                decColor: provider.isCorrectAns(
+                            questionIndex,
+                            index,
+                            state.questionsResponse!.data![questionIndex]
+                                .answers!) &&
+                        provider.checkAnsisCorrect(
+                            questionIndex,
+                            state.questionsResponse!.data![questionIndex]
+                                    .correctAnswere ??
+                                "")
+                    ? AppColors.green.withOpacity(0.9)
+                    : provider.isCorrectAns(
+                            questionIndex,
+                            index,
+                            state.questionsResponse!.data![questionIndex]
+                                .answers!)
+                        ? AppColors.red.withOpacity(0.9)
+                        : AppColors.white),
+            alignment: Alignment.center,
+            child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    text: AppConfig.answereOptions[index] + ") ",
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: Dimensions.size_14,
+                        fontWeight: FontWeight.w400),
+                    children: [TextSpan(text: _data)])),
+            // child: ListTile(
+            //   leading: Container(
+            //     height: 24,
+            //     width: 24,
+            //     alignment: Alignment.center,
+            //     child: Text("${AppConfig.answereOptions[index]})",
+            //         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            //             fontSize: Dimensions.size_14,
+            //             fontWeight: FontWeight.w400)),
+            //   ),
+            //   title: RichText(
+            //       text: TextSpan(
+            //           text: '',
+            //           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            //               fontSize: Dimensions.size_14,
+            //               fontWeight: FontWeight.w400),
+            //           children: [TextSpan(text: _data)])),
+            // ),
+          ),
+        );
       },
+      itemCount: state.questionsResponse!.data![questionIndex].answers!.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // Number of columns
+        crossAxisSpacing: 15.0, // Spacing between columns
+        mainAxisSpacing: 20, // Spacing between rows
+        childAspectRatio: 1.9, // Width to height ratio
+      ),
     );
+    // } else {
+    //   return Wrap(children: ,);
+    // }
   }
 }

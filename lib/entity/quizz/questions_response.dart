@@ -46,22 +46,27 @@ class QuestionsData {
   final List<String>? answers;
   @JsonKey(name: "correct_answer")
   final String? correctAnswere;
+  @JsonKey(name: "imageUrl")
+  final String? imageUrl;
 
   QuestionsData({
     this.question,
     this.answers,
     this.correctAnswere,
+    this.imageUrl,
   });
 
   QuestionsData copyWith({
     String? question,
     List<String>? answers,
     String? correctAnswere,
+    String? imageUrl,
   }) =>
       QuestionsData(
         question: question ?? this.question,
         answers: answers ?? this.answers,
         correctAnswere: correctAnswere ?? this.correctAnswere,
+        imageUrl: imageUrl ?? this.imageUrl,
       );
 
   factory QuestionsData.fromJson(Map<String, dynamic> json) =>

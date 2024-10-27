@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:kurups_app/entity/quizz/questions_response.dart';
+import 'package:kurups_app/screens/answer/answer.dart';
 import 'package:kurups_app/screens/chapters/chapters.dart';
 import 'package:kurups_app/screens/lessons/subchapter.dart';
 import 'package:kurups_app/screens/home/view/home.dart';
@@ -27,6 +29,8 @@ class RouteHelper {
   static const String videoScreenPath = '/videoScreen';
   static const String quizzScreenName = 'quizzScreen';
   static const String quizzScreenPath = '/quizzScreen';
+  static const String answereScreenName = 'answereScreen';
+  static const String answereScreenPath = '/answereScreen';
 
   static GoRouter get router => _router;
   static final _router = GoRouter(
@@ -94,6 +98,16 @@ class RouteHelper {
         builder: (context, state) {
           return QuizScreen(
             path: state.extra as Map,
+          );
+        },
+      ),
+      GoRoute(
+        name: answereScreenName,
+        path: answereScreenPath,
+        builder: (context, state) {
+          List<QuestionsData> _data = state.extra as List<QuestionsData>;
+          return AnswerHint(
+            answerHints: _data,
           );
         },
       )

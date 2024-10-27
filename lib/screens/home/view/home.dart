@@ -15,6 +15,8 @@ import 'package:kurups_app/service/database.dart';
 import 'package:kurups_app/utils/dimension/app_sizes.dart';
 import 'package:kurups_app/utils/dimension/dimension.dart';
 import 'package:kurups_app/utils/helper/box_decorations.dart';
+import 'package:kurups_app/widgets/full_screen_dialog.dart';
+import 'package:kurups_app/widgets/quizz_alert.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({

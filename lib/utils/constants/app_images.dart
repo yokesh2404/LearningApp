@@ -6,4 +6,8 @@ class AppImages {
   static const String diamond = "assets/images/sketch.png";
   static const String startlearning = "assets/images/undraw.png";
   static const String play = "assets/images/pl.png";
+  static const String errorImage = "assets/images/error.png";
+  static const String success = "assets/images/success.png";
+  static const String paymentSuccess = "assets/images/payment_success.png";
+  static const String paymentError = "assets/images/payment_failed.png";
 }

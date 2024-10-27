@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$QuizzState {
   UIStatus get status => throw _privateConstructorUsedError;
+  bool get startTimer => throw _privateConstructorUsedError;
   QuestionsResponse? get questionsResponse =>
       throw _privateConstructorUsedError;
 
@@ -31,7 +32,8 @@ abstract class $QuizzStateCopyWith<$Res> {
           QuizzState value, $Res Function(QuizzState) then) =
       _$QuizzStateCopyWithImpl<$Res, QuizzState>;
   @useResult
-  $Res call({UIStatus status, QuestionsResponse? questionsResponse});
+  $Res call(
+      {UIStatus status, bool startTimer, QuestionsResponse? questionsResponse});
 
   $UIStatusCopyWith<$Res> get status;
 }
@@ -50,6 +52,7 @@ class _$QuizzStateCopyWithImpl<$Res, $Val extends QuizzState>
   @override
   $Res call({
     Object? status = null,
+    Object? startTimer = null,
     Object? questionsResponse = freezed,
   }) {
     return _then(_value.copyWith(
@@ -57,6 +60,10 @@ class _$QuizzStateCopyWithImpl<$Res, $Val extends QuizzState>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
+      startTimer: null == startTimer
+          ? _value.startTimer
+          : startTimer // ignore: cast_nullable_to_non_nullable
+              as bool,
       questionsResponse: freezed == questionsResponse
           ? _value.questionsResponse
           : questionsResponse // ignore: cast_nullable_to_non_nullable
@@ -81,7 +88,8 @@ abstract class _$$QuizzStateImplCopyWith<$Res>
       __$$QuizzStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UIStatus status, QuestionsResponse? questionsResponse});
+  $Res call(
+      {UIStatus status, bool startTimer, QuestionsResponse? questionsResponse});
 
   @override
   $UIStatusCopyWith<$Res> get status;
@@ -99,6 +107,7 @@ class __$$QuizzStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
+    Object? startTimer = null,
     Object? questionsResponse = freezed,
   }) {
     return _then(_$QuizzStateImpl(
@@ -106,6 +115,10 @@ class __$$QuizzStateImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
+      startTimer: null == startTimer
+          ? _value.startTimer
+          : startTimer // ignore: cast_nullable_to_non_nullable
+              as bool,
       questionsResponse: freezed == questionsResponse
           ? _value.questionsResponse
           : questionsResponse // ignore: cast_nullable_to_non_nullable
@@ -118,17 +131,22 @@ class __$$QuizzStateImplCopyWithImpl<$Res>
 
 class _$QuizzStateImpl implements _QuizzState {
   const _$QuizzStateImpl(
-      {this.status = const UIStatus.initial(), this.questionsResponse});
+      {this.status = const UIStatus.initial(),
+      this.startTimer = false,
+      this.questionsResponse});
 
   @override
   @JsonKey()
   final UIStatus status;
   @override
+  @JsonKey()
+  final bool startTimer;
+  @override
   final QuestionsResponse? questionsResponse;
 
   @override
   String toString() {
-    return 'QuizzState(status: $status, questionsResponse: $questionsResponse)';
+    return 'QuizzState(status: $status, startTimer: $startTimer, questionsResponse: $questionsResponse)';
   }
 
   @override
@@ -137,12 +155,15 @@ class _$QuizzStateImpl implements _QuizzState {
         (other.runtimeType == runtimeType &&
             other is _$QuizzStateImpl &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.startTimer, startTimer) ||
+                other.startTimer == startTimer) &&
             (identical(other.questionsResponse, questionsResponse) ||
                 other.questionsResponse == questionsResponse));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status, questionsResponse);
+  int get hashCode =>
+      Object.hash(runtimeType, status, startTimer, questionsResponse);
 
   @JsonKey(ignore: true)
   @override
@@ -154,10 +175,13 @@ class _$QuizzStateImpl implements _QuizzState {
 abstract class _QuizzState implements QuizzState {
   const factory _QuizzState(
       {final UIStatus status,
+      final bool startTimer,
       final QuestionsResponse? questionsResponse}) = _$QuizzStateImpl;
 
   @override
   UIStatus get status;
+  @override
+  bool get startTimer;
   @override
   QuestionsResponse? get questionsResponse;
   @override

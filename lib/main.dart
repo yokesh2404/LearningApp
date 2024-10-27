@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kurups_app/firebase_options.dart';
 import 'package:kurups_app/injector/injector.dart';
+import 'package:kurups_app/screens/quiz/bloc/quizz_bloc.dart';
 
 //import 'package:kurups_app/home/home.dart';
 import 'package:kurups_app/screens/splash/splash.dart';
@@ -37,17 +38,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppSizes.instance.getScreenSize(context);
-    return MaterialApp.router(
-      // localizationsDelegates: AppLocalizations.localizationsDelegates,
-      // supportedLocales: AppLocalizations.supportedLocales,
-      themeMode: Theme.of(context).brightness == Brightness.dark
-          ? ThemeMode.dark
-          : ThemeMode.light,
-      theme: ThemeHelper.lightTheme,
-      darkTheme: ThemeHelper.darkTheme,
-      routerConfig: RouteHelper.router,
-      debugShowCheckedModeBanner: false,
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => Injector.instance<QuizzBloc>(),
+          )
+        ],
+        child: MaterialApp.router(
+          // localizationsDelegates: AppLocalizations.localizationsDelegates,
+          // supportedLocales: AppLocalizations.supportedLocales,
+          themeMode: Theme.of(context).brightness == Brightness.dark
+              ? ThemeMode.dark
+              : ThemeMode.light,
+          theme: ThemeHelper.lightTheme,
+          darkTheme: ThemeHelper.darkTheme,
+          routerConfig: RouteHelper.router,
+          debugShowCheckedModeBanner: false,
+        ));
   }
 }
 

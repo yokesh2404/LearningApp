@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kurups_app/utils/constants/colors.dart';
 
 class FullScreenDialog {
-  static void showFullScreenPopup(BuildContext context) {
+  static void showFullScreenPopup(BuildContext context,
+      {required Widget child}) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true, // Dismiss when tapped outside
@@ -10,15 +10,11 @@ class FullScreenDialog {
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, animation, secondaryAnimation) {
         return PopScope(
-          canPop: false,
+          canPop: true,
           onPopInvoked: (didPop) {},
-          child: const Scaffold(
-            backgroundColor: Colors.transparent, // Transparent background
-            body: SafeArea(
-              child: Column(
-                children: [],
-              ),
-            ),
+          child: Scaffold(
+            backgroundColor: Colors.white, // Transparent background
+            body: child,
           ),
         );
       },

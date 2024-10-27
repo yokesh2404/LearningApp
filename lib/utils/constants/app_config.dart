@@ -11,4 +11,6 @@ class AppConfig {
     DrawerListTile(icons: Icons.info, title: AppString.about),
     DrawerListTile(icons: Icons.exit_to_app, title: AppString.signOut)
   ];
+
+  static Map answereOptions = {0: "A", 1: "B", 2: "C", 3: "D"};
 }
