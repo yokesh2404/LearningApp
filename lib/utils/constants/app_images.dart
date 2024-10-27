@@ -10,4 +10,7 @@ class AppImages {
   static const String success = "assets/images/success.png";
   static const String paymentSuccess = "assets/images/payment_success.png";
   static const String paymentError = "assets/images/payment_failed.png";
+  static const String paymentBg = "assets/images/payment_bg.jpeg";
+  static const String paymentBgPng = "assets/images/payment_bg.png";
+  static const String paymentBackground = "assets/images/payment_backgroud.png";
 }

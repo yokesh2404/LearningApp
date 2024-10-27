@@ -49,35 +49,6 @@ class AnswerHint extends StatelessWidget {
                 height: Dimensions.height_48,
                 buttonText: AppString.goBackHome),
           )
-          // ElevatedButton(
-          //   onPressed: () {},
-          //   style: ElevatedButton.styleFrom(
-          //     foregroundColor: Colors.white,
-          //     backgroundColor: const Color.fromARGB(255, 97, 147, 119),
-          //     padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(30.0),
-          //     ),
-          //     elevation: 5,
-          //   ),
-          //   child: Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Icon(
-          //         Icons.home,
-          //         size: 30.0,
-          //         color:
-          //             const Color.fromARGB(255, 35, 23, 62), // Customize color
-          //       ),
-          //       SizedBox(width: 10),
-          //       Text(
-          //         'My Home',
-          //         style: TextStyle(color: Color.fromARGB(255, 35, 23, 62)),
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kurups_app/entity/chapters/chapters_response.dart';
 import 'package:kurups_app/entity/home/course_details.dart';
 import 'package:kurups_app/entity/lessons/lessons_response.dart';
+import 'package:kurups_app/entity/payment/payment_details_response.dart';
+import 'package:kurups_app/entity/payment/payment_response.dart';
 import 'package:kurups_app/entity/quizz/questions_response.dart';
 import 'package:kurups_app/entity/request/user_details/user_details.dart';
 import 'package:kurups_app/service/firebase_services/firebase_database/database_keys.dart';
@@ -135,6 +137,82 @@ class FirebaseDatabaseService {
       return response;
     } catch (e) {
       return response;
+    }
+  }
+
+  Future<PaymentResponse> checkPaymentStatus({required Map path}) async {
+    String userId = await SharedPrefController.instance
+        .getStringData(key: SharedPrefKeys.userId);
+    PaymentResponse response = PaymentResponse();
+    try {
+      var course = path["course"];
+
+      // var document = path["selectedChapter"];
+      // var subDoc = path["description"];
+      var data = await _firestore
+          .collection(DatabaseKeys.paymentDetails)
+          .doc(course)
+          .collection(DatabaseKeys.subscribers)
+          .doc(userId)
+          .get();
+
+      var snapshot = data.data();
+
+      log("${snapshot}");
+      response = PaymentResponse.fromJson(snapshot!);
+
+      return response;
+    } catch (e) {
+      return PaymentResponse();
+    }
+  }
+
+  Future<void> setPaymentInfo(
+      {required Map path,
+      required int amount,
+      required String paymentId}) async {
+    String userId = await SharedPrefController.instance
+        .getStringData(key: SharedPrefKeys.userId);
+    var course = path["course"];
+
+    var data = {
+      "data": PaymentData(
+              paymentId: paymentId,
+              expireAt: DateTime.now().add(Duration(days: 28 * 3)).toString(),
+              course: course,
+              amount: amount,
+              userId: userId)
+          .toJson()
+    };
+    try {
+      await _firestore
+          .collection(DatabaseKeys.paymentDetails)
+          .doc(course)
+          .collection(DatabaseKeys.subscribers)
+          .doc(userId)
+          .set(data);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<PaymentDetailsResponse> getCoursePaymentDetails(
+      {required Map path}) async {
+    var course = path["course"];
+    PaymentDetailsResponse response = PaymentDetailsResponse();
+    try {
+      var _data = await _firestore
+          .collection(DatabaseKeys.paymentDetails)
+          .doc(course)
+          .get();
+
+      var snapshot = _data.data();
+
+      response = PaymentDetailsResponse.fromJson(snapshot!);
+
+      return response;
+    } catch (e) {
+      return PaymentDetailsResponse();
     }
   }
 }

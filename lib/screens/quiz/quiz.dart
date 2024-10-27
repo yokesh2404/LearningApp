@@ -2,9 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kurups_app/entity/quizz/questions_response.dart';
-import 'package:kurups_app/injector/injector.dart';
-import 'package:kurups_app/screens/chapters/chapters.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_bloc.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_event.dart';
 import 'package:kurups_app/provider/quizz/quizz_provider.dart';
@@ -238,14 +235,6 @@ class _QuizScreenState extends State<QuizScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                // RichText(
-                //     text: TextSpan(
-
-                //   text: '${_data.question}.',
-                //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                //       fontSize: Dimensions.size_16,
-                //       fontWeight: FontWeight.w600),
-                // )),
                 const SizedBox(
                   height: Dimensions.size_16,
                 ),
@@ -310,24 +299,6 @@ class _QuizScreenState extends State<QuizScreen> {
                         fontSize: Dimensions.size_14,
                         fontWeight: FontWeight.w400),
                     children: [TextSpan(text: _data)])),
-            // child: ListTile(
-            //   leading: Container(
-            //     height: 24,
-            //     width: 24,
-            //     alignment: Alignment.center,
-            //     child: Text("${AppConfig.answereOptions[index]})",
-            //         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            //             fontSize: Dimensions.size_14,
-            //             fontWeight: FontWeight.w400)),
-            //   ),
-            //   title: RichText(
-            //       text: TextSpan(
-            //           text: '',
-            //           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            //               fontSize: Dimensions.size_14,
-            //               fontWeight: FontWeight.w400),
-            //           children: [TextSpan(text: _data)])),
-            // ),
           ),
         );
       },
@@ -339,8 +310,5 @@ class _QuizScreenState extends State<QuizScreen> {
         childAspectRatio: 1.9, // Width to height ratio
       ),
     );
-    // } else {
-    //   return Wrap(children: ,);
-    // }
   }
 }

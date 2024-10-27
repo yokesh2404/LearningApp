@@ -43,4 +43,6 @@ class AppErrors {
 
 class AppAlertMessage {
   static const String emailError = 'Please enter a valid email';
+  static const String paymentError =
+      "Something went wrong.Please try again later!";
 }

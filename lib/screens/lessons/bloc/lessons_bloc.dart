@@ -4,10 +4,16 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kurups_app/data/auth_repo/auth_repo.dart';
 import 'package:kurups_app/data/database_repo/database_repo.dart';
+import 'package:kurups_app/data/payment_service/payment_service_repo.dart';
 import 'package:kurups_app/entity/lessons/lessons_response.dart';
+import 'package:kurups_app/entity/payment/payment_details_response.dart';
+import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
 import 'package:kurups_app/service/log_services/log_service.dart';
+import 'package:kurups_app/service/payment_service/payment_service.dart';
 import 'package:kurups_app/utils/bloc_core/ui_status.dart';
 import 'package:kurups_app/utils/helper/route_helper.dart';
+import 'package:kurups_app/widgets/full_screen_dialog.dart';
+import 'package:kurups_app/widgets/payment_dialog.dart';
 
 part 'lessons_event.dart';
 part 'lessons_state.dart';
@@ -17,14 +23,17 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
   late final AuthRepo _authServices;
   late final DatabaseRepo _databaseService;
   late final LogService _logService;
+  late final PaymentServiceRepo _paymentRepo;
   LessonsBloc(
       {required AuthRepo authServices,
       required DatabaseRepo databaseService,
-      required LogService logService})
+      required LogService logService,
+      required PaymentServiceRepo paymentServiceRepo})
       : super(LessonsState()) {
     _authServices = authServices;
     _databaseService = databaseService;
     _logService = logService;
+    _paymentRepo = paymentServiceRepo;
     on<LessonsEvent>((event, emit) {});
     on<GetLessons>((event, emit) => getLessons(event, emit));
     on<ClickLessons>((event, emit) => clickLessons(event, emit));
@@ -47,8 +56,27 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
 
   void clickLessons(ClickLessons event, Emitter emit) async {
     Map finalReq = {...event.databasePath, ...event.data.toJson()};
-    // await _databaseService.getQuestionsById(path: {});
-    GoRouter.of(event.context)
-        .pushNamed(RouteHelper.videoScreenName, extra: finalReq);
+    var paymentStatus =
+        await _databaseService.checkPaymentStatus(path: event.databasePath);
+    if (paymentStatus.data != null && paymentStatus.data!.paymentId != null) {
+      GoRouter.of(event.context)
+          .pushNamed(RouteHelper.videoScreenName, extra: finalReq);
+    } else {
+      var paymentData = await _databaseService.getCoursePaymentDetails(
+          path: event.databasePath);
+      if (paymentData.data != null) {
+        FullScreenDialog.showFullScreenPopup(event.context,
+            child: PaymentDialog(
+              paymentDetails: paymentData.data!,
+              bloc: this,
+              path: event.databasePath,
+              lessonsData: event.data,
+            ));
+      }
+    }
+
+    // FirebaseDatabaseService()
+    //     .setPaymentInfo(path: event.databasePath, amount: 200, paymentId: '');
+    // _paymentRepo.openRazorpay(paymentRequest: {});
   }
 }

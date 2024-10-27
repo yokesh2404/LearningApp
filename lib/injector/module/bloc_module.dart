@@ -22,7 +22,8 @@ class BlocModule {
       ..registerFactory<LessonsBloc>(() => LessonsBloc(
           authServices: Injector.instance(),
           databaseService: Injector.instance(),
-          logService: Injector.instance()))
+          logService: Injector.instance(),
+          paymentServiceRepo: Injector.instance()))
       ..registerFactory<QuizzBloc>(() => QuizzBloc(
           databaseService: Injector.instance(),
           logService: Injector.instance()));

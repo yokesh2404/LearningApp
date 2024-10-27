@@ -1,0 +1,1 @@
+enum EnvironmentMode { dev, prod }

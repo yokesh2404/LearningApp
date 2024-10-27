@@ -3,6 +3,7 @@ import 'package:kurups_app/service/firebase_services/firebase_auth_implementatio
 import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
 import 'package:kurups_app/service/log_services/debug_log_service.dart';
 import 'package:kurups_app/service/log_services/log_service.dart';
+import 'package:kurups_app/service/payment_service/payment_service.dart';
 
 class ServiceModule {
   ServiceModule._();
@@ -13,6 +14,7 @@ class ServiceModule {
       ..registerFactory<LogService>(DebugLogService.new)
       ..registerFactory<FirebaseAuthServices>(() => FirebaseAuthServices())
       ..registerFactory<FirebaseDatabaseService>(
-          () => FirebaseDatabaseService());
+          () => FirebaseDatabaseService())
+      ..registerFactory<PaymentService>(() => PaymentService());
   }
 }
