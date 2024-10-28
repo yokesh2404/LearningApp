@@ -15,6 +15,7 @@ class ServiceModule {
       ..registerFactory<FirebaseAuthServices>(() => FirebaseAuthServices())
       ..registerFactory<FirebaseDatabaseService>(
           () => FirebaseDatabaseService())
-      ..registerFactory<PaymentService>(() => PaymentService());
+      ..registerFactory<PaymentService>(
+          () => PaymentService(databaseService: Injector.instance()));
   }
 }

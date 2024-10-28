@@ -58,7 +58,7 @@ class _PlayScreenState extends State<PlayScreen> {
         context.pushReplacementNamed(RouteHelper.quizzScreenName,
             extra: widget.path);
       }
-      setState(() {});
+      // setState(() {});
     });
   }
 

@@ -11,6 +11,7 @@ import 'package:kurups_app/service/firebase_services/firebase_database/firebase_
 import 'package:kurups_app/service/log_services/log_service.dart';
 import 'package:kurups_app/service/payment_service/payment_service.dart';
 import 'package:kurups_app/utils/bloc_core/ui_status.dart';
+import 'package:kurups_app/utils/constants/app_config.dart';
 import 'package:kurups_app/utils/helper/route_helper.dart';
 import 'package:kurups_app/widgets/full_screen_dialog.dart';
 import 'package:kurups_app/widgets/payment_dialog.dart';
@@ -37,6 +38,7 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
     on<LessonsEvent>((event, emit) {});
     on<GetLessons>((event, emit) => getLessons(event, emit));
     on<ClickLessons>((event, emit) => clickLessons(event, emit));
+    on<PaymentClick>((event, emit) => buyCourse(event, emit));
   }
 
   void getLessons(GetLessons event, Emitter emit) async {
@@ -78,5 +80,25 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
     // FirebaseDatabaseService()
     //     .setPaymentInfo(path: event.databasePath, amount: 200, paymentId: '');
     // _paymentRepo.openRazorpay(paymentRequest: {});
+  }
+
+  buyCourse(PaymentClick event, Emitter emit) async {
+    if (event.paymentDetails.amount != null) {
+      var options = {
+        'key': AppConfig.razorPayKey,
+        'amount': event.paymentDetails.amount! * 100,
+        'name': 'kurups maths',
+        'description': event.paymentDetails.courseName,
+        // 'prefill': {'contact': '1234567890', 'email': 'text@gmail.com'},
+        // 'external': {
+        //   'wallets': ['paytm']
+        // }
+      };
+      Map finalReq = {...event.databasePath, ...event.data.toJson()};
+      _paymentRepo.openRazorpay(
+          paymentRequest: options,
+          path: event.databasePath,
+          lessonsData: finalReq);
+    }
   }
 }

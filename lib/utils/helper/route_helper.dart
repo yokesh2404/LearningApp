@@ -113,4 +113,8 @@ class RouteHelper {
       )
     ],
   );
+
+  static navigateToPath(String pathName, dynamic data) {
+    router.pushNamed(pathName, extra: data);
+  }
 }

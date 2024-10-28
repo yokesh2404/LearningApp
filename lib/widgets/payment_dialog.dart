@@ -110,7 +110,14 @@ class PaymentDialog extends StatelessWidget {
                     ButtonWidget(
                         borderColor: AppColors.warning,
                         backgroundColor: AppColors.warning,
-                        onClick: () {},
+                        onClick: () {
+                          context.pop();
+                          bloc.add(PaymentClick(
+                              databasePath: path,
+                              data: lessonsData,
+                              context: context,
+                              paymentDetails: paymentDetails));
+                        },
                         buttonText: "Buy now")
                   ],
                 ),

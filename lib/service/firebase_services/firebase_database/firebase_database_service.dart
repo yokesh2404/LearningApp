@@ -178,7 +178,7 @@ class FirebaseDatabaseService {
     var data = {
       "data": PaymentData(
               paymentId: paymentId,
-              expireAt: DateTime.now().add(Duration(days: 28 * 3)).toString(),
+              expireAt: DateTime.now().add(Duration(days: 28 * 6)).toString(),
               course: course,
               amount: amount,
               userId: userId)

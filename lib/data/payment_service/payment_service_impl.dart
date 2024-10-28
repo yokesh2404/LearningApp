@@ -11,8 +11,12 @@ class PaymentServiceImpl extends PaymentServiceRepo {
   }
 
   @override
-  void openRazorpay({required Map<String, dynamic> paymentRequest}) async {
+  void openRazorpay(
+      {required Map<String, dynamic> paymentRequest,
+      required Map path,
+      required Map lessonsData}) async {
     initRazorPay();
-    await service.createOrder(request: paymentRequest);
+    await service.createOrder(
+        request: paymentRequest, path: path, lessonsData: lessonsData);
   }
 }
