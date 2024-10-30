@@ -33,3 +33,9 @@ class TryAgainClick extends QuizzEvent {
     required this.response,
   });
 }
+
+class StartStopTimer extends QuizzEvent {
+  final bool timerStatus;
+
+  StartStopTimer({required this.timerStatus});
+}

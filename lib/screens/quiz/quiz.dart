@@ -8,6 +8,7 @@ import 'package:kurups_app/provider/quizz/quizz_provider.dart';
 import 'package:kurups_app/utils/constants/app_config.dart';
 import 'package:kurups_app/utils/constants/app_string.dart';
 import 'package:kurups_app/utils/constants/colors.dart';
+import 'package:kurups_app/utils/dimension/app_sizes.dart';
 import 'package:kurups_app/utils/dimension/dimension.dart';
 import 'package:kurups_app/utils/helper/app_toast_helper.dart';
 import 'package:kurups_app/utils/helper/box_decorations.dart';
@@ -55,6 +56,7 @@ class _QuizScreenState extends State<QuizScreen> {
   // Function to start stopwatch and countdown timer
   void _startTimer() {
     // _stopwatch.start();
+    bloc.add(StartStopTimer(timerStatus: true));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_totalTime > 0) {
         setState(() {
@@ -62,6 +64,7 @@ class _QuizScreenState extends State<QuizScreen> {
           usedTime++;
         });
       } else {
+        bloc.add(StartStopTimer(timerStatus: false));
         // if (usedTime != 0) {
         _submitQuiz();
         // }
@@ -261,45 +264,61 @@ class _QuizScreenState extends State<QuizScreen> {
       itemBuilder: (context, index) {
         var _data =
             state.questionsResponse!.data![questionIndex].answers![index];
-        return InkWell(
-          onTap: () {
-            provider.updatuserAns(
-                quesionIndex: questionIndex,
-                ansIndex: index,
-                answers:
-                    state.questionsResponse!.data![questionIndex].answers!);
-          },
-          child: Container(
-            padding: const EdgeInsets.all(Dimensions.size_10),
-            decoration: BoxDecorations.decorationWithShadow(
-                decColor: provider.isCorrectAns(
-                            questionIndex,
-                            index,
-                            state.questionsResponse!.data![questionIndex]
-                                .answers!) &&
-                        provider.checkAnsisCorrect(
-                            questionIndex,
-                            state.questionsResponse!.data![questionIndex]
-                                    .correctAnswere ??
-                                "")
-                    ? AppColors.green.withOpacity(0.9)
-                    : provider.isCorrectAns(
-                            questionIndex,
-                            index,
-                            state.questionsResponse!.data![questionIndex]
-                                .answers!)
-                        ? AppColors.red.withOpacity(0.9)
-                        : AppColors.white),
-            alignment: Alignment.center,
-            child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    text: AppConfig.answereOptions[index] + ") ",
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontSize: Dimensions.size_14,
-                        fontWeight: FontWeight.w400),
-                    children: [TextSpan(text: _data)])),
-          ),
+        return Column(
+          children: [
+            Text(
+              AppConfig.answereOptions[index],
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(
+              height: Dimensions.size_08,
+            ),
+            InkWell(
+              onTap: () {
+                provider.updatuserAns(
+                    quesionIndex: questionIndex,
+                    ansIndex: index,
+                    answers:
+                        state.questionsResponse!.data![questionIndex].answers!);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(Dimensions.size_10),
+                decoration: BoxDecorations.boxDecorationwithoutShadow(
+                    radius: BorderRadius.all(Radius.circular(0)),
+                    borderColor: AppColors.black,
+                    backgroundColor: provider.isCorrectAns(
+                                questionIndex,
+                                index,
+                                state.questionsResponse!.data![questionIndex]
+                                    .answers!) &&
+                            provider.checkAnsisCorrect(
+                                questionIndex,
+                                state.questionsResponse!.data![questionIndex]
+                                        .correctAnswere ??
+                                    "")
+                        ? AppColors.green.withOpacity(0.9)
+                        : provider.isCorrectAns(
+                                questionIndex,
+                                index,
+                                state.questionsResponse!.data![questionIndex]
+                                    .answers!)
+                            ? AppColors.red.withOpacity(0.9)
+                            : AppColors.white),
+                alignment: Alignment.center,
+                child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                        text: "",
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: Dimensions.size_14,
+                            fontWeight: FontWeight.w400),
+                        children: [TextSpan(text: _data)])),
+              ),
+            ),
+          ],
         );
       },
       itemCount: state.questionsResponse!.data![questionIndex].answers!.length,
@@ -307,7 +326,7 @@ class _QuizScreenState extends State<QuizScreen> {
         crossAxisCount: 2, // Number of columns
         crossAxisSpacing: 15.0, // Spacing between columns
         mainAxisSpacing: 20, // Spacing between rows
-        childAspectRatio: 1.9, // Width to height ratio
+        childAspectRatio: 1.4, // Width to height ratio
       ),
     );
   }

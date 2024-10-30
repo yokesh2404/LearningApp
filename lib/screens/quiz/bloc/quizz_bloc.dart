@@ -87,9 +87,14 @@ class QuizzBloc extends Bloc<QuizzEvent, QuizzState> {
     _provider.resetUserAns();
     log(jsonEncode(response.data));
 
-    if (response.data != null && response.data!.isNotEmpty) {
-      response.data!.shuffle();
-    }
-    emit(state.copyWith(questionsResponse: response, startTimer: true));
+    // if (response.data != null && response.data!.isNotEmpty) {
+    //   // response.data!.shuffle();
+    // }
+    emit(state.copyWith(
+        questionsResponse: response, startTimer: !state.startTimer));
+  }
+
+  stopTimer(StartStopTimer event, Emitter emit) {
+    emit(state.copyWith(startTimer: event.timerStatus));
   }
 }
