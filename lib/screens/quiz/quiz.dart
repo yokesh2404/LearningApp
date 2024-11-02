@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kurups_app/entity/quizz/questions_response.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_bloc.dart';
 import 'package:kurups_app/screens/quiz/bloc/quizz_event.dart';
 import 'package:kurups_app/provider/quizz/quizz_provider.dart';
@@ -192,9 +194,11 @@ class _QuizScreenState extends State<QuizScreen> {
                         borderColor: AppColors.primary,
                         height: Dimensions.height_48,
                         onClick: () {
+                          provider.getInCorrectAnswers(
+                              state.questionsResponse!.data!);
                           // _submitQuiz();
-                          print(state.questionsResponse);
-                          if (provider.userAns.length ==
+                          // print(state.questionsResponse);
+                          if (provider.selectedAns.length ==
                               state.questionsResponse!.data!.length) {
                             _submitQuiz();
                           } else {
@@ -231,13 +235,7 @@ class _QuizScreenState extends State<QuizScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _data.question ?? "",
-                  maxLines: 10,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
+                _buildQuestions(_data),
                 const SizedBox(
                   height: Dimensions.size_16,
                 ),
@@ -255,79 +253,260 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   _buildAnsweres(int questionIndex, QuizzState state) {
-    var isGridView = state.questionsResponse!.data![questionIndex].answers!
-        .any((e) => e.length > 5);
+    var _data = state.questionsResponse!.data![questionIndex].answers;
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return _renderAnswers(questionIndex, _data[index].data ?? [],
+              _data[index].correctAnswer ?? "", index);
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: Dimensions.height_12,
+          );
+        },
+        itemCount: _data!.length);
+
     // if (isGridView) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        var _data =
-            state.questionsResponse!.data![questionIndex].answers![index];
-        return Column(
-          children: [
-            Text(
-              AppConfig.answereOptions[index],
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: Dimensions.size_08,
-            ),
-            InkWell(
-              onTap: () {
-                provider.updatuserAns(
-                    quesionIndex: questionIndex,
-                    ansIndex: index,
-                    answers:
-                        state.questionsResponse!.data![questionIndex].answers!);
-              },
-              child: Container(
-                padding: const EdgeInsets.all(Dimensions.size_10),
-                decoration: BoxDecorations.boxDecorationwithoutShadow(
-                    radius: BorderRadius.all(Radius.circular(0)),
-                    borderColor: AppColors.black,
-                    backgroundColor: provider.isCorrectAns(
-                                questionIndex,
-                                index,
-                                state.questionsResponse!.data![questionIndex]
-                                    .answers!) &&
-                            provider.checkAnsisCorrect(
-                                questionIndex,
-                                state.questionsResponse!.data![questionIndex]
-                                        .correctAnswere ??
-                                    "")
-                        ? AppColors.green.withOpacity(0.9)
-                        : provider.isCorrectAns(
-                                questionIndex,
-                                index,
-                                state.questionsResponse!.data![questionIndex]
-                                    .answers!)
-                            ? AppColors.red.withOpacity(0.9)
-                            : AppColors.white),
-                alignment: Alignment.center,
-                child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                        text: "",
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            fontSize: Dimensions.size_14,
-                            fontWeight: FontWeight.w400),
-                        children: [TextSpan(text: _data)])),
+  }
+
+  _renderAnswers(int questionIndex, List<String> answers, String correctAnswere,
+      int answereColumnIndex) {
+    var isGridView = answers.any((e) {
+      // print(e.length);
+      return e.length > 7;
+    });
+    if (isGridView) {
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          var _data = answers[index];
+          return Column(
+            children: [
+              if (answereColumnIndex == 0) ...[
+                Text(
+                  AppConfig.answereOptions[index],
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: Dimensions.size_08,
+                )
+              ],
+              InkWell(
+                onTap: () {
+                  provider.updatselectedAns(
+                      quesionIndex: questionIndex,
+                      answerColumnIndex: answereColumnIndex,
+                      answersList: answers,
+                      answere: _data);
+                  // provider.updatuserAns(
+                  //     quesionIndex: questionIndex,
+                  //     ansIndex: index,
+                  //     answers: answers);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(Dimensions.size_10),
+                  decoration: BoxDecorations.boxDecorationwithoutShadow(
+                      radius: BorderRadius.all(Radius.circular(0)),
+                      borderColor: AppColors.black,
+                      backgroundColor: provider.isCorrectAns(questionIndex,
+                                  index, answers, answereColumnIndex) &&
+                              provider.checkAnsisCorrect(questionIndex,
+                                  correctAnswere, answereColumnIndex)
+                          ? AppColors.green.withOpacity(0.9)
+                          : provider.isCorrectAns(questionIndex, index, answers,
+                                  answereColumnIndex)
+                              ? AppColors.red.withOpacity(0.9)
+                              : AppColors.white),
+                  alignment: Alignment.center,
+                  child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                          text: "",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  fontSize: Dimensions.size_14,
+                                  fontWeight: FontWeight.w400),
+                          children: [TextSpan(text: _data)])),
+                ),
               ),
+            ],
+          );
+        },
+        itemCount: answers.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Number of columns
+          crossAxisSpacing: 15.0, // Spacing between columns
+          mainAxisSpacing: 20, // Spacing between rows
+          childAspectRatio: 1.4, // Width to height ratio
+        ),
+      );
+    } else {
+      return Wrap(
+        spacing: _calculateSpacing(context, answers),
+        children: answers.map((e) {
+          var index = answers.indexOf(e);
+          var _data = answers[index];
+          return Column(
+            children: [
+              if (answereColumnIndex == 0) ...[
+                Text(
+                  AppConfig.answereOptions[index],
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: Dimensions.size_08,
+                ),
+              ],
+              InkWell(
+                onTap: () {
+                  provider.updatselectedAns(
+                      quesionIndex: questionIndex,
+                      answerColumnIndex: answereColumnIndex,
+                      answersList: answers,
+                      answere: _data);
+                  // provider.updatuserAns(
+                  //     quesionIndex: questionIndex,
+                  //     ansIndex: index,
+                  //     answers: answers);
+                },
+                child: Container(
+                  width: 70,
+                  height: 70,
+                  // padding: const EdgeInsets.all(Dimensions.size_10),
+                  decoration: BoxDecorations.boxDecorationwithoutShadow(
+                      radius: BorderRadius.all(Radius.circular(0)),
+                      borderColor: AppColors.black,
+                      backgroundColor: provider.isCorrectAns(questionIndex,
+                                  index, answers, answereColumnIndex) &&
+                              provider.checkAnsisCorrect(questionIndex,
+                                  correctAnswere, answereColumnIndex)
+                          ? AppColors.green.withOpacity(0.9)
+                          : provider.isCorrectAns(questionIndex, index, answers,
+                                  answereColumnIndex)
+                              ? AppColors.red.withOpacity(0.9)
+                              : AppColors.white),
+                  alignment: Alignment.center,
+                  child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                          text: "",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  fontSize: Dimensions.size_14,
+                                  fontWeight: FontWeight.w400),
+                          children: [TextSpan(text: _data)])),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      );
+    }
+  }
+
+  // double _calculateSpacing(BuildContext context, int itemCount) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final itemWidth = 50.0; // Adjust based on the size of each item
+  //   final totalItemWidth = itemCount * itemWidth;
+  //   final remainingSpace = screenWidth - totalItemWidth;
+  //   return remainingSpace /
+  //       (itemCount > 1
+  //           ? itemCount - 1
+  //           : 1); // Distribute remaining space evenly
+  // }
+
+  double _calculateSpacing(BuildContext context, List<String> items) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate the total width of all items based on their text length
+    double totalItemWidth = items.fold(
+        0, (sum, item) => sum + 46 + 38); // Adding padding to each item
+
+    // Calculate remaining space and distribute it evenly between items
+    final remainingSpace = screenWidth - totalItemWidth;
+    return remainingSpace / (items.length > 1 ? items.length - 1 : 1);
+  }
+
+  double _calculateTextWidth(String text) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: const TextStyle(fontSize: 16)),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    return textPainter.width;
+  }
+
+  _buildQuestions(QuestionsData data) {
+    if (data.separationNeeded != null && data.separationNeeded!) {
+      var _textData = extractDigitsAndSpecialChars(data.question ?? "");
+      return RichText(
+          textAlign: TextAlign.end,
+          text: TextSpan(
+              children: _textData.map((e) {
+            RegExp regex = RegExp(r'[\d\W]+');
+            if (regex.hasMatch(e)) {
+              return WidgetSpan(
+                  child: Math.tex(
+                e.trim(),
+                textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ));
+            } else {
+              return TextSpan(
+                text: e + " ",
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              );
+            }
+          }).toList()));
+    } else {
+      return Text(
+        data.question ?? "",
+        maxLines: 10,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
             ),
-          ],
-        );
-      },
-      itemCount: state.questionsResponse!.data![questionIndex].answers!.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Number of columns
-        crossAxisSpacing: 15.0, // Spacing between columns
-        mainAxisSpacing: 20, // Spacing between rows
-        childAspectRatio: 1.4, // Width to height ratio
-      ),
-    );
+      );
+    }
+  }
+
+  List<String> extractDigitsAndSpecialChars(String text) {
+    // Regex to match digits and special characters
+    RegExp regex = RegExp(r'[\d\W]+');
+    List<String> parts = [];
+    int lastMatchEnd = 0;
+
+    // Finding matches and capturing the text around them
+    for (final match in regex.allMatches(text)) {
+      // Add any text before the current match
+      if (match.start > lastMatchEnd) {
+        parts.add(text.substring(lastMatchEnd, match.start));
+      }
+      // Add the matched special character or digit
+      parts.add(match.group(0)!);
+      lastMatchEnd = match.end;
+    }
+    // Add any remaining text after the last match
+    if (lastMatchEnd < text.length) {
+      parts.add(text.substring(lastMatchEnd));
+    }
+
+    return parts;
   }
 }

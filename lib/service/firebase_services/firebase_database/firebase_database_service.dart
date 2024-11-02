@@ -215,4 +215,10 @@ class FirebaseDatabaseService {
       return PaymentDetailsResponse();
     }
   }
+
+  addArrayList() async {
+    await _firestore.collection("Courses").doc("basicConcepts").set(
+      {},
+    );
+  }
 }

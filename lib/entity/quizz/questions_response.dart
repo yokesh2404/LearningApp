@@ -43,34 +43,59 @@ class QuestionsData {
   @JsonKey(name: "question")
   final String? question;
   @JsonKey(name: "answers")
-  final List<String>? answers;
+  final List<AnswersData>? answers;
   @JsonKey(name: "correct_answer")
   final String? correctAnswere;
   @JsonKey(name: "imageUrl")
   final String? imageUrl;
+  @JsonKey(name: "separationNeeded")
+  final bool? separationNeeded;
 
-  QuestionsData({
-    this.question,
-    this.answers,
-    this.correctAnswere,
-    this.imageUrl,
-  });
+  QuestionsData(
+      {this.question,
+      this.answers,
+      this.correctAnswere,
+      this.imageUrl,
+      this.separationNeeded});
 
-  QuestionsData copyWith({
-    String? question,
-    List<String>? answers,
-    String? correctAnswere,
-    String? imageUrl,
-  }) =>
+  QuestionsData copyWith(
+          {String? question,
+          List<AnswersData>? answers,
+          String? correctAnswere,
+          String? imageUrl,
+          bool? separationNeeded}) =>
       QuestionsData(
-        question: question ?? this.question,
-        answers: answers ?? this.answers,
-        correctAnswere: correctAnswere ?? this.correctAnswere,
-        imageUrl: imageUrl ?? this.imageUrl,
-      );
+          question: question ?? this.question,
+          answers: answers ?? this.answers,
+          correctAnswere: correctAnswere ?? this.correctAnswere,
+          imageUrl: imageUrl ?? this.imageUrl,
+          separationNeeded: separationNeeded ?? this.separationNeeded);
 
   factory QuestionsData.fromJson(Map<String, dynamic> json) =>
       _$QuestionsDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$QuestionsDataToJson(this);
+}
+
+@JsonSerializable()
+class AnswersData {
+  @JsonKey(name: "data")
+  final List<String>? data;
+  @JsonKey(name: "correct_answer")
+  final String? correctAnswer;
+
+  AnswersData({
+    this.data,
+    this.correctAnswer,
+  });
+
+  AnswersData copyWith({List<String>? data, String? correctAnswer}) =>
+      AnswersData(
+          data: data ?? this.data,
+          correctAnswer: correctAnswer ?? this.correctAnswer);
+
+  factory AnswersData.fromJson(Map<String, dynamic> json) =>
+      _$AnswersDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnswersDataToJson(this);
 }
