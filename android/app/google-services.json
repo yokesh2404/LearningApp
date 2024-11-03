@@ -9,7 +9,64 @@
       "client_info": {
         "mobilesdk_app_id": "1:757892127923:android:f8a31af3c38119133f24c6",
         "android_client_info": {
+          "package_name": "com.example.kurups_a"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSwfuA20gDXMYLz7DK9ndtXq3YjBeQ9-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757892127923:android:595e2b047add78903f24c6",
+        "android_client_info": {
           "package_name": "com.example.kurups_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSwfuA20gDXMYLz7DK9ndtXq3YjBeQ9-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757892127923:android:86faa30087ddc8b63f24c6",
+        "android_client_info": {
+          "package_name": "com.kurups.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSwfuA20gDXMYLz7DK9ndtXq3YjBeQ9-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757892127923:android:389d2992ef517db83f24c6",
+        "android_client_info": {
+          "package_name": "com.maths.admin"
         }
       },
       "oauth_client": [],

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kurups_app/entity/quizz/questions_response.dart';
@@ -29,13 +30,22 @@ class AnswerHint extends StatelessWidget {
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8.0),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Image.network(
-                      answerHints[index].imageUrl ?? "",
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(16.0),
+                      child: CachedNetworkImage(
+                        imageUrl: answerHints[index].imageUrl ?? "",
+                        width: 100,
+                        height: 100,
+                        errorWidget: (context, url, error) {
+                          print(error);
+                          return SizedBox(
+                            child: Text("can't show image"),
+                          );
+                        },
+                      )
+                      // Image.network(
+
+                      // ),
+                      ),
                 );
               },
             ),

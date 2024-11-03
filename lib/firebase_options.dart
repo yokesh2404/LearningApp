@@ -17,19 +17,13 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -59,21 +53,40 @@ class DefaultFirebaseOptions {
   //   projectId: 'maths123-d732c',
   //   storageBucket: 'maths123-d732c.appspot.com',
   //   iosBundleId: 'com.example.kurupsApp',
-  // );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCSwfuA20gDXMYLz7DK9ndtXq3YjBeQ9-c',
-    appId: '1:757892127923:android:f8a31af3c38119133f24c6',
+    appId: '1:757892127923:android:595e2b047add78903f24c6',
     messagingSenderId: '757892127923',
     projectId: 'maths123-d732c',
     storageBucket: 'maths123-d732c.appspot.com',
   );
 
-  // static const FirebaseOptions ios = FirebaseOptions(
-  //   apiKey: 'AIzaSyDFER_UX-rQ2WLRt9b4kkornvNywRgHdoI',
-  //   appId: '1:197396646377:ios:5f725a97dccd856a06a378',
-  //   messagingSenderId: '197396646377',
-  //   projectId: 'batikair-my-prod',
-  //   storageBucket: 'batikair-my-prod.appspot.com',
-  //   iosBundleId: 'com.batikairmyios.app',
   // );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+      apiKey: 'AIzaSyDMbm-kK4yPEy0lsvv-hUBOBYIIwjohulM',
+      appId: '1:757892127923:ios:b56f913fe317c2ca3f24c6',
+      messagingSenderId: '757892127923',
+      projectId: 'maths123-d732c',
+      storageBucket: 'maths123-d732c.appspot.com',
+      iosBundleId: 'com.kurups.maths.ios');
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyC5R0WkSGsWHnrJP6ONVh2oCgkmAuU3gOw',
+    appId: '1:757892127923:web:d4ceb7020c03bbaa3f24c6',
+    messagingSenderId: '757892127923',
+    projectId: 'maths123-d732c',
+    authDomain: 'maths123-d732c.firebaseapp.com',
+    storageBucket: 'maths123-d732c.appspot.com',
+  );
+
+//   {
+//   apiKey: "AIzaSyC5R0WkSGsWHnrJP6ONVh2oCgkmAuU3gOw",
+//   authDomain: "maths123-d732c.firebaseapp.com",
+//   projectId: "maths123-d732c",
+//   storageBucket: "maths123-d732c.appspot.com",
+//   messagingSenderId: "757892127923",
+//   appId: "1:757892127923:web:760d921242ee8c6d3f24c6"
+// }
 }

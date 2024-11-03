@@ -50,30 +50,30 @@ class _PlayScreenState extends State<PlayScreen> {
       ..initialize().then((_) {
         setState(() {
           _isLoading = false;
-          _controller!.play();
+          // _controller!.play();
         });
       }).catchError((error) {
         print("Error initializing video: $error");
       });
 
     _manager = FlickManager(
-        videoPlayerController: VideoPlayerController.network(downloadUrl)
-          ..initialize().then((_) {
-            setState(() {
-              _isLoading = false;
-              _controller!.play();
-            });
-          }).catchError((error) {
-            print("Error initializing video: $error");
-          }),
-        onVideoEnd: () {
-          if (_manager.flickControlManager!.isFullscreen) {
-            _manager.flickControlManager!.exitFullscreen();
-          }
-          context.pushReplacementNamed(RouteHelper.quizzScreenName,
-              extra: widget.path);
-        },
-        autoPlay: true);
+      videoPlayerController: VideoPlayerController.network(downloadUrl)
+        ..initialize().then((_) {
+          setState(() {
+            _isLoading = false;
+            // _controller!.play();
+          });
+        }).catchError((error) {
+          print("Error initializing video: $error");
+        }),
+      onVideoEnd: () {
+        if (_manager.flickControlManager!.isFullscreen) {
+          _manager.flickControlManager!.exitFullscreen();
+        }
+        context.pushReplacementNamed(RouteHelper.quizzScreenName,
+            extra: widget.path);
+      },
+    );
 
     // Listen to video player events (to update seekbar)
     // _controller!.addListener(() {
@@ -134,116 +134,118 @@ class _PlayScreenState extends State<PlayScreen> {
         ),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Display video player
-                  AspectRatio(
-                    aspectRatio: 16 / 10,
-                    child: FlickVideoPlayer(flickManager: _manager),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Seek bar
-                  // if (_controller!.value.isInitialized)
-                  //   Stack(
-                  //     children: [
-                  //       Row(
-                  //         children: [
-                  //           // Control buttons (Play/Pause, Forward, Backward)
-                  //           Row(
-                  //             mainAxisAlignment: MainAxisAlignment.center,
-                  //             children: [
-                  //               IconButton(
-                  //                 icon: const Icon(Icons.replay_5),
-                  //                 onPressed: _seekBackward,
-                  //               ),
-                  //               IconButton(
-                  //                 icon: Icon(_controller!.value.isPlaying
-                  //                     ? Icons.pause
-                  //                     : Icons.play_arrow),
-                  //                 onPressed: () {
-                  //                   setState(() {
-                  //                     _controller!.value.isPlaying
-                  //                         ? _controller!.pause()
-                  //                         : _controller!.play();
-                  //                   });
-                  //                 },
-                  //               ),
-                  //               IconButton(
-                  //                 icon: const Icon(Icons.forward_5),
-                  //                 onPressed: _seekForward,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //           Column(
-                  //             children: [
-                  //               Slider(
-                  //                 value: _controller!.value.position.inSeconds
-                  //                     .toDouble(),
-                  //                 min: 0,
-                  //                 max: _controller!.value.duration.inSeconds
-                  //                     .toDouble(),
-                  //                 onChanged: (value) {
-                  //                   setState(() {
-                  //                     _controller!.seekTo(
-                  //                         Duration(seconds: value.toInt()));
-                  //                   });
-                  //                 },
-                  //               ),
-                  //               // Padding(
-                  //               //   padding:
-                  //               //       const EdgeInsets.symmetric(horizontal: 16.0),
-                  //               //   child: Row(
-                  //               //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //               //     children: [
-                  //               //       Text(
-                  //               //         _formatDuration(_controller!.value.position),st,
-                  //               //       ),
-                  //               //       Text(
-                  //               //         _formatDuration(_controller!.value.duration),
-                  //               //       ),
-                  //               //     ],
-                  //               //   ),
-                  //               // ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       Align(
-                  //           alignment: Alignment.centerRight,
-                  //           child: IconButton(
-                  //               onPressed: () {
-                  //                 print("exit clicked");
-                  //               },
-                  //               icon: Icon(Icons.fullscreen)))
-                  //     ],
-                  //   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                            text: TextSpan(
-                                text: 'Lesson : ',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                        fontSize: Dimensions.size_18,
-                                        fontWeight: FontWeight.w600),
-                                children: [
-                              TextSpan(text: widget.path['title'])
-                            ])),
-                        const SizedBox(
-                          height: Dimensions.height_12,
-                        ),
-                        Text(AppString.videoScreenContent)
-                      ],
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Display video player
+                    AspectRatio(
+                      aspectRatio: 16 / 10,
+                      child: FlickVideoPlayer(flickManager: _manager),
                     ),
-                  )
-                ],
+                    const SizedBox(height: 10),
+
+                    // Seek bar
+                    // if (_controller!.value.isInitialized)
+                    //   Stack(
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           // Control buttons (Play/Pause, Forward, Backward)
+                    //           Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               IconButton(
+                    //                 icon: const Icon(Icons.replay_5),
+                    //                 onPressed: _seekBackward,
+                    //               ),
+                    //               IconButton(
+                    //                 icon: Icon(_controller!.value.isPlaying
+                    //                     ? Icons.pause
+                    //                     : Icons.play_arrow),
+                    //                 onPressed: () {
+                    //                   setState(() {
+                    //                     _controller!.value.isPlaying
+                    //                         ? _controller!.pause()
+                    //                         : _controller!.play();
+                    //                   });
+                    //                 },
+                    //               ),
+                    //               IconButton(
+                    //                 icon: const Icon(Icons.forward_5),
+                    //                 onPressed: _seekForward,
+                    //               ),
+                    //             ],
+                    //           ),
+                    //           Column(
+                    //             children: [
+                    //               Slider(
+                    //                 value: _controller!.value.position.inSeconds
+                    //                     .toDouble(),
+                    //                 min: 0,
+                    //                 max: _controller!.value.duration.inSeconds
+                    //                     .toDouble(),
+                    //                 onChanged: (value) {
+                    //                   setState(() {
+                    //                     _controller!.seekTo(
+                    //                         Duration(seconds: value.toInt()));
+                    //                   });
+                    //                 },
+                    //               ),
+                    //               // Padding(
+                    //               //   padding:
+                    //               //       const EdgeInsets.symmetric(horizontal: 16.0),
+                    //               //   child: Row(
+                    //               //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //               //     children: [
+                    //               //       Text(
+                    //               //         _formatDuration(_controller!.value.position),st,
+                    //               //       ),
+                    //               //       Text(
+                    //               //         _formatDuration(_controller!.value.duration),
+                    //               //       ),
+                    //               //     ],
+                    //               //   ),
+                    //               // ),
+                    //             ],
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       Align(
+                    //           alignment: Alignment.centerRight,
+                    //           child: IconButton(
+                    //               onPressed: () {
+                    //                 print("exit clicked");
+                    //               },
+                    //               icon: Icon(Icons.fullscreen)))
+                    //     ],
+                    //   ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                              text: TextSpan(
+                                  text: 'Lesson : ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: Dimensions.size_18,
+                                          fontWeight: FontWeight.w600),
+                                  children: [
+                                TextSpan(text: widget.path['title'])
+                              ])),
+                          const SizedBox(
+                            height: Dimensions.height_12,
+                          ),
+                          Text(AppString.videoScreenContent)
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
       ),
     );
