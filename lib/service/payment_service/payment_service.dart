@@ -4,7 +4,8 @@ import 'package:kurups_app/service/firebase_services/firebase_database/firebase_
 import 'package:kurups_app/utils/constants/app_string.dart';
 import 'package:kurups_app/utils/helper/app_toast_helper.dart';
 import 'package:kurups_app/utils/helper/route_helper.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:razorpay_web/razorpay_web.dart';
+// import 'package:razorpay_flutter/razor.dart';
 
 class PaymentService {
   late FirebaseDatabaseService _databaseService;

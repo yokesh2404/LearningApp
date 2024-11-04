@@ -16,6 +16,8 @@ import 'package:kurups_app/utils/helper/app_toast_helper.dart';
 import 'package:kurups_app/utils/helper/box_decorations.dart';
 import 'package:kurups_app/widgets/appbar_widget.dart';
 import 'package:kurups_app/widgets/button_widget.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key, required this.path});
@@ -345,7 +347,7 @@ class _QuizScreenState extends State<QuizScreen> {
           crossAxisCount: 2, // Number of columns
           crossAxisSpacing: 15.0, // Spacing between columns
           mainAxisSpacing: 20, // Spacing between rows
-          childAspectRatio: 1.4, // Width to height ratio
+          childAspectRatio: kIsWeb ? 5 : 1.4, // Width to height ratio
         ),
       );
     } else {
