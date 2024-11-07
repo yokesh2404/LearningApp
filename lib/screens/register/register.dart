@@ -17,10 +17,14 @@ import 'package:kurups_app/provider/auth/register_provider.dart';
 import 'package:kurups_app/service/firebase_services/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:kurups_app/service/firebase_services/firebase_database/firebase_database_service.dart';
 import 'package:kurups_app/utils/constants/app_string.dart';
+import 'package:kurups_app/utils/dimension/dimension.dart';
 import 'package:kurups_app/utils/helper/function_helper.dart';
 import 'package:kurups_app/utils/helper/route_helper.dart';
 //import 'package:random_string/random_string.dart';
 //import 'package:random_string/random_string.dart';
+
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -93,194 +97,218 @@ class _RegisterPageState extends State<RegisterPage> with AppFunctionHelper {
               padding: const EdgeInsets.all(16.0),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Image.asset(
-                        'assets/images/logo 1.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                        controller: _nameController,
-                        keyboardType: TextInputType.name,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                          prefixIcon: Icon(Icons.people),
-                          border: OutlineInputBorder(),
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Image.asset(
+                          'assets/images/logo 1.png',
+                          fit: BoxFit.cover,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email),
-                        border: OutlineInputBorder(),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
-                      // onSaved: (value) => _name = value,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: !_passwordVisible,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: kIsWeb
+                            ? Dimensions.screenWidth / 2
+                            : Dimensions.screenWidth,
+                        child: TextFormField(
+                            controller: _nameController,
+                            keyboardType: TextInputType.name,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            decoration: const InputDecoration(
+                              labelText: 'Name',
+                              prefixIcon: Icon(Icons.people),
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your name';
+                              }
+                              return null;
+                            }),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: kIsWeb
+                            ? Dimensions.screenWidth / 2
+                            : Dimensions.screenWidth,
+                        child: TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            prefixIcon: Icon(Icons.email),
+                            border: OutlineInputBorder(),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your name';
+                            }
+                            return null;
                           },
+                          // onSaved: (value) => _name = value,
                         ),
-                        border: const OutlineInputBorder(),
                       ),
-                      // obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppErrors.passwordEmpty;
-                        } else if (value.isNotEmpty &&
-                            !isStrongPassword(value)) {
-                          return AppErrors.passwordError;
-                        }
-                        return null;
-                      },
-                      //onSaved: (value) => _password = value,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: !_confirmPasswordVisible,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _confirmPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: kIsWeb
+                            ? Dimensions.screenWidth / 2
+                            : Dimensions.screenWidth,
+                        child: TextFormField(
+                          controller: _passwordController,
+                          obscureText: !_passwordVisible,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: const Icon(Icons.lock),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                            border: const OutlineInputBorder(),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _confirmPasswordVisible =
-                                  !_confirmPasswordVisible;
-                            });
+                          // obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppErrors.passwordEmpty;
+                            } else if (value.isNotEmpty &&
+                                !isStrongPassword(value)) {
+                              return AppErrors.passwordError;
+                            }
+                            return null;
                           },
-                        ),
-                        border: const OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    if (!registerProvider.isLoading) ...[
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            _signUp();
-                            // String id = randomAlphaNumeric(15);
-                            // Map<String, dynamic> usersInfoMap = {
-                            //   "name": _nameController.text,
-                            //   "email": _emailController.text,
-                            //   "password": _passwordController.text,
-                            //   "confirm password": _confirmPasswordController.text
-                            // };
-                            // await DatabaseMethods()
-                            //     .addUsersDetails(usersInfoMap, id)
-                            //     .then((onValue) {
-                            //   Fluttertoast.showToast(
-                            //       msg: "The user's details were updated",
-                            //       toastLength: Toast.LENGTH_LONG,
-                            //       gravity: ToastGravity.CENTER,
-                            //       timeInSecForIosWeb: 1,
-                            //       backgroundColor: AppColors.onSecondary,
-                            //       textColor: AppColors.primary,
-                            //       fontSize: 16.0);
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => const LoginScreen()));
-                            //   ScaffoldMessenger.of(context).showSnackBar(
-                            //     const SnackBar(content: Text('Registering...')),
-                            //   );
-                            // });
-                          }
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(AppColors.primary)),
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(color: AppColors.onPrimary),
+                          //onSaved: (value) => _password = value,
                         ),
                       ),
-                      TextButton(
-                          onPressed: () {
-                            context.pop();
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: kIsWeb
+                            ? Dimensions.screenWidth / 2
+                            : Dimensions.screenWidth,
+                        child: TextFormField(
+                          controller: _confirmPasswordController,
+                          obscureText: !_confirmPasswordVisible,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            prefixIcon: const Icon(Icons.lock),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _confirmPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _confirmPasswordVisible =
+                                      !_confirmPasswordVisible;
+                                });
+                              },
+                            ),
+                            border: const OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm your password';
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
                           },
-                          // style: ButtonStyle(
-                          //   backgroundColor: WidgetStateProperty.all(AppColors.primary),
-                          // ),
-                          child: RichText(
-                              text: TextSpan(children: [
-                            const TextSpan(
-                                text: AppString.alreadyRegistered,
-                                style: TextStyle(color: AppColors.onSurface)),
-                            const WidgetSpan(
-                                child: SizedBox(
-                              width: 5,
-                            )),
-                            TextSpan(
-                                text: AppString.login,
-                                style:
-                                    const TextStyle(color: AppColors.primary),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    // Handle the tap on "Dart" text
-                                    context.pop();
-                                  })
-                          ])))
-                    ] else ...[
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
                         ),
-                      )
-                    ]
-                  ],
+                      ),
+                      const SizedBox(height: 20),
+                      if (!registerProvider.isLoading) ...[
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              _signUp();
+                              // String id = randomAlphaNumeric(15);
+                              // Map<String, dynamic> usersInfoMap = {
+                              //   "name": _nameController.text,
+                              //   "email": _emailController.text,
+                              //   "password": _passwordController.text,
+                              //   "confirm password": _confirmPasswordController.text
+                              // };
+                              // await DatabaseMethods()
+                              //     .addUsersDetails(usersInfoMap, id)
+                              //     .then((onValue) {
+                              //   Fluttertoast.showToast(
+                              //       msg: "The user's details were updated",
+                              //       toastLength: Toast.LENGTH_LONG,
+                              //       gravity: ToastGravity.CENTER,
+                              //       timeInSecForIosWeb: 1,
+                              //       backgroundColor: AppColors.onSecondary,
+                              //       textColor: AppColors.primary,
+                              //       fontSize: 16.0);
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => const LoginScreen()));
+                              //   ScaffoldMessenger.of(context).showSnackBar(
+                              //     const SnackBar(content: Text('Registering...')),
+                              //   );
+                              // });
+                            }
+                          },
+                          style: const ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppColors.primary)),
+                          child: const Text(
+                            'Register',
+                            style: TextStyle(color: AppColors.onPrimary),
+                          ),
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            // style: ButtonStyle(
+                            //   backgroundColor: WidgetStateProperty.all(AppColors.primary),
+                            // ),
+                            child: RichText(
+                                text: TextSpan(children: [
+                              const TextSpan(
+                                  text: AppString.alreadyRegistered,
+                                  style: TextStyle(color: AppColors.onSurface)),
+                              const WidgetSpan(
+                                  child: SizedBox(
+                                width: 5,
+                              )),
+                              TextSpan(
+                                  text: AppString.login,
+                                  style:
+                                      const TextStyle(color: AppColors.primary),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // Handle the tap on "Dart" text
+                                      context.pop();
+                                    })
+                            ])))
+                      ] else ...[
+                        const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        )
+                      ]
+                    ],
+                  ),
                 ),
               ),
             ),

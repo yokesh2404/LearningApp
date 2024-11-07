@@ -132,16 +132,17 @@ class _QuizScreenState extends State<QuizScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text('To be answered in 5 Minutes',
+                        Text('To be answered in 5 Minutes',
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: Dimensions.getTextSize(16),
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.secondary),
                             textAlign: TextAlign.center),
-                        const Text(
+                        Text(
                             'After working out in seperate sheet of paper,Point out the answer from the 4 options by clicking your answer.',
                             style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
+                                fontSize: Dimensions.getTextSize(14),
+                                fontWeight: FontWeight.w600),
                             textAlign: TextAlign.center),
                         const SizedBox(height: 10),
                         // Row for timers in separate boxes
@@ -153,8 +154,8 @@ class _QuizScreenState extends State<QuizScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Time Used: ${formattedTime(isUsedTime: true)}',
-                                style: const TextStyle(
-                                    fontSize: 12,
+                                style: TextStyle(
+                                    fontSize: Dimensions.getTextSize(12),
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.primary),
                               ),
@@ -164,8 +165,8 @@ class _QuizScreenState extends State<QuizScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Remaining Time: ${formattedTime(isUsedTime: false)}',
-                                style: const TextStyle(
-                                    fontSize: 12,
+                                style: TextStyle(
+                                    fontSize: Dimensions.getTextSize(12),
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.primary),
                               ),
@@ -195,6 +196,14 @@ class _QuizScreenState extends State<QuizScreen> {
                         backgroundColor: AppColors.primary,
                         borderColor: AppColors.primary,
                         height: Dimensions.height_48,
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.white,
+                                fontSize:
+                                    kIsWeb ? Dimensions.getTextSize(14) : 14),
                         onClick: () {
                           provider.getInCorrectAnswers(
                               state.questionsResponse!.data!);
@@ -290,10 +299,9 @@ class _QuizScreenState extends State<QuizScreen> {
               if (answereColumnIndex == 0) ...[
                 Text(
                   AppConfig.answereOptions[index],
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: kIsWeb ? Dimensions.getTextSize(16) : 16,
+                      fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
                   height: Dimensions.size_08,
@@ -314,6 +322,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(Dimensions.size_10),
                   decoration: BoxDecorations.boxDecorationwithoutShadow(
+                      borderWidth: 5,
                       radius: BorderRadius.all(Radius.circular(0)),
                       borderColor: AppColors.black,
                       backgroundColor: provider.isCorrectAns(questionIndex,
@@ -334,7 +343,8 @@ class _QuizScreenState extends State<QuizScreen> {
                               .textTheme
                               .bodyLarge!
                               .copyWith(
-                                  fontSize: Dimensions.size_14,
+                                  fontSize:
+                                      kIsWeb ? Dimensions.getTextSize(14) : 14,
                                   fontWeight: FontWeight.w400),
                           children: [TextSpan(text: _data)])),
                 ),
@@ -361,10 +371,9 @@ class _QuizScreenState extends State<QuizScreen> {
               if (answereColumnIndex == 0) ...[
                 Text(
                   AppConfig.answereOptions[index],
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: kIsWeb ? Dimensions.getTextSize(16) : 16,
+                      fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
                   height: Dimensions.size_08,
@@ -389,6 +398,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   decoration: BoxDecorations.boxDecorationwithoutShadow(
                       radius: BorderRadius.all(Radius.circular(0)),
                       borderColor: AppColors.black,
+                      borderWidth: 5,
                       backgroundColor: provider.isCorrectAns(questionIndex,
                                   index, answers, answereColumnIndex) &&
                               provider.checkAnsisCorrect(questionIndex,
@@ -407,7 +417,8 @@ class _QuizScreenState extends State<QuizScreen> {
                               .textTheme
                               .bodyLarge!
                               .copyWith(
-                                  fontSize: Dimensions.size_14,
+                                  fontSize:
+                                      kIsWeb ? Dimensions.getTextSize(14) : 14,
                                   fontWeight: FontWeight.w400),
                           children: [TextSpan(text: _data)])),
                 ),
@@ -465,6 +476,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: Math.tex(
                 e.trim(),
                 textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: kIsWeb ? Dimensions.getTextSize(14) : 14,
                       fontWeight: FontWeight.w600,
                     ),
               ));
@@ -472,6 +484,7 @@ class _QuizScreenState extends State<QuizScreen> {
               return TextSpan(
                 text: e + " ",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: kIsWeb ? Dimensions.getTextSize(14) : 14,
                       fontWeight: FontWeight.w600,
                     ),
               );
@@ -482,6 +495,7 @@ class _QuizScreenState extends State<QuizScreen> {
         data.question ?? "",
         maxLines: 10,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: kIsWeb ? Dimensions.getTextSize(14) : 14,
               fontWeight: FontWeight.w600,
             ),
       );

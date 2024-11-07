@@ -18,6 +18,9 @@ import 'package:kurups_app/utils/helper/box_decorations.dart';
 import 'package:kurups_app/widgets/full_screen_dialog.dart';
 import 'package:kurups_app/widgets/quizz_alert.dart';
 
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
@@ -109,6 +112,7 @@ class _HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                             color: AppColors.borderPrimary.withOpacity(0.5)),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
                               height: Dimensions.screenHeight / 2,
@@ -191,48 +195,52 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: Dimensions.height_24,
             ),
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                  hintText: 'Search...',
-                  suffixIcon: const Icon(Icons.search),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      style: BorderStyle.solid,
-                      color: AppColors.white,
+            SizedBox(
+              width:
+                  kIsWeb ? Dimensions.screenWidth / 2 : Dimensions.screenWidth,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                    hintText: 'Search...',
+                    suffixIcon: const Icon(Icons.search),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        style: BorderStyle.solid,
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      style: BorderStyle.solid,
-                      color: AppColors.white,
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        style: BorderStyle.solid,
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      style: BorderStyle.solid,
-                      color: AppColors.white,
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        style: BorderStyle.solid,
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      style: BorderStyle.solid,
-                      color: AppColors.white,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        style: BorderStyle.solid,
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      style: BorderStyle.solid,
-                      color: AppColors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        style: BorderStyle.solid,
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                  filled: true,
-                  fillColor: AppColors.surface),
+                    filled: true,
+                    fillColor: AppColors.surface),
+              ),
             ),
             const SizedBox(height: 16.0), // Add some space below the search bar
             Container(

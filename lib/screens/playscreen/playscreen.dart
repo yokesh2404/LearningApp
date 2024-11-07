@@ -9,6 +9,8 @@ import 'package:kurups_app/utils/helper/route_helper.dart';
 import 'package:kurups_app/widgets/appbar_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 // PlayScreen for Video Playback with controls
 class PlayScreen extends StatefulWidget {
@@ -140,7 +142,10 @@ class _PlayScreenState extends State<PlayScreen> {
                   children: [
                     // Display video player
                     AspectRatio(
-                      aspectRatio: 16 / 10,
+                      aspectRatio: kIsWeb
+                          ? _manager.flickVideoManager!.videoPlayerController!
+                              .value.aspectRatio
+                          : 16 / 10,
                       child: FlickVideoPlayer(flickManager: _manager),
                     ),
                     const SizedBox(height: 10),

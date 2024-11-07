@@ -11,7 +11,7 @@ class Dimensions {
 
   static getHeight(double size) => (screenHeight / defaultHeight) * size;
   static getWidth(double size) => (screenWidth / defaultWidth) * size;
-  static getTextSize(double size, {double? factor = 0.5}) =>
+  static getTextSize(double size, {double? factor = 0.3}) =>
       size + (getWidth(size) - size) * factor;
 
   static const double xs = 4.0;
