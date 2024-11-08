@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Container(
                               height: Dimensions.screenHeight / 2,
-                              width: Dimensions.screenWidth,
+                              width: double.infinity,
                               decoration:
                                   BoxDecorations.boxDecorationwithoutShadow(
                                       borderColor: AppColors.primary,

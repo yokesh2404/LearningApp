@@ -474,7 +474,7 @@ class _QuizScreenState extends State<QuizScreen> {
             if (regex.hasMatch(e)) {
               return WidgetSpan(
                   child: Math.tex(
-                e.trim(),
+                e,
                 textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontSize: kIsWeb ? Dimensions.getTextSize(14) : 14,
                       fontWeight: FontWeight.w600,
@@ -504,7 +504,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   List<String> extractDigitsAndSpecialChars(String text) {
     // Regex to match digits and special characters
-    RegExp regex = RegExp(r'[\d\W]+');
+    RegExp regex = RegExp(r'(\d+\^\{\{[^}]+\}\})');
     List<String> parts = [];
     int lastMatchEnd = 0;
 
