@@ -1,3 +1,3 @@
 # LearningApp
 
-Using bloc firebase
+Using bloc clean architecture firebase 
