@@ -15,7 +15,7 @@ def keystoreProperties = new Properties()
    }
 
 android {
-     namespace = "com.example.kurups_app"
+    namespace = "com.example.kurups_app"
     compileSdk = 34
     // flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
