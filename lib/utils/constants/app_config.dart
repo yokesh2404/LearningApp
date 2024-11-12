@@ -16,5 +16,5 @@ class AppConfig {
   static Map answereOptions = {0: "A", 1: "B", 2: "C", 3: "D"};
 
   static const String razorPayKey =
-      environmentMode == EnvironmentMode.dev ? 'rzp_test_1DP5mmOlF5G5ag' : '';
+      environmentMode == EnvironmentMode.dev ? '' : '';
 }
