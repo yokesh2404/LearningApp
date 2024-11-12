@@ -26,6 +26,6 @@ class EncryptData {
 }
 
 class EncryptionKeys {
-  static const encryptionKey = "QesFaDuc17KKROxfLgLEFQ==";
-  static const encryptionIV = "V2D1fTz+H2Co/NSSeqtwWQ==";
+  static const encryptionKey = "key";
+  static const encryptionIV = "iv;
 }
